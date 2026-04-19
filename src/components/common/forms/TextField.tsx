@@ -12,6 +12,7 @@ type Props = {
   type: TextFieldType;
   label?: string;
   labelRight?: React.ReactNode;
+  id?: string;
   description?: string;
   placeholder?: string;
   value: string;
@@ -30,6 +31,7 @@ const TextField = ({
   type,
   label,
   labelRight,
+  id,
   description,
   placeholder,
   value,
@@ -64,6 +66,7 @@ const TextField = ({
       >
         <InputGroupInput
           type={type}
+          id={id}
           placeholder={placeholder}
           value={value}
           onChange={e => onChange(e.target.value)}

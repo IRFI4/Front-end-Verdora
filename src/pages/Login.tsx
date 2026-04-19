@@ -80,17 +80,21 @@ const Login = () => {
               </span>
               <div className="h-px flex-1 bg-zinc-200" />
             </div>
-            <Button variant={'default'} className="w-full">
-              <GoogleIcon className="size-6 w-20 h-20 mr-12" />
-              Continue with Google
-            </Button>
-            <p className="text-[16px] text-zinc-500">
-              Don't have an account?{' '}
-              <a href="#" className="text-[var(--accent)] hover:underline">
-                Sign up
-              </a>
-            </p>
           </div>
+          <Button
+            variant={'default'}
+            className="w-full cursor-pointer"
+            type="button"
+          >
+            <GoogleIcon className="size-6 w-20 h-20 mr-12" />
+            Continue with Google
+          </Button>
+          <p className="text-[16px] text-zinc-500">
+            Don't have an account?{' '}
+            <a href="#" className="text-[var(--accent)] hover:underline">
+              Sign up
+            </a>
+          </p>
         </div>
       </div>
     </LayoutPage>

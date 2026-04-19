@@ -12,7 +12,7 @@ const buttonVariants = cva(
         default:
           `bg-white text-[var(--text)] hover:bg-gray-100 border-2 border-[var(--border)] hover:border-[var(--accent)]`,
         active:
-          `bg-[var(--accent)] text-[var(--accent-text)] hover:bg-[var(--accent-hover)]`,
+          `bg-[var(--accent)] text-[var(--accent-text)] hover:bg-[var(--accent-hover)] cursor-pointer`,
         inactive:
           `bg-[var(--accent-inactive)] text-[var(--accent-text)] hover:cursor-not-allowed`,
         click:
