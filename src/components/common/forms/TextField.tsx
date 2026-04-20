@@ -50,7 +50,13 @@ const TextField = ({
       {(label || labelRight) && (
         <div className="flex items-center justify-between">
           {label && (
-            <FieldLabel className={cn('text-sm', labelClassName)}>
+            <FieldLabel
+              className={cn(
+                'text-[14px] font-medium text-[var(--text-h)]',
+                labelClassName
+              )}
+              htmlFor={id}
+            >
               {label}
             </FieldLabel>
           )}
@@ -59,7 +65,10 @@ const TextField = ({
       )}
       <InputGroup
         className={cn(
-          'h-[50px] rounded-[12px] bg-[var(--block-bg)] border border-zinc-300 transition focus-within:ring-2 focus-within:ring-[var(--accent)]',
+          `h-[50px] w-full rounded-[12px] border bg-[var(--block-bg)]
+          border-2 border-zinc-300
+          has-[[data-slot=input-group-control]:focus-visible]:border-[var(--accent)]
+          has-[[data-slot=input-group-control]:focus-visible]:ring-0`,
           error && 'border-red-500 focus-within:ring-red-500',
           containerClassName
         )}
@@ -71,7 +80,9 @@ const TextField = ({
           value={value}
           onChange={e => onChange(e.target.value)}
           className={cn(
-            'h-full px-16 text-[16px] focus:outline-none',
+            `h-full w-full bg-transparent pl-16 pr-16
+            text-[16px] text-[var(--text-h)]
+            placeholder:text-[16px] placeholder:[font-family:var(--font-sans)] placeholder:text-[var(--text-muted)]`,
             error && 'placeholder:text-red-400',
             inputClassName
           )}

@@ -67,6 +67,10 @@ const inputGroupButtonVariants = cva(
   "flex items-center gap-2 text-sm shadow-none",
   {
     variants: {
+      variant: {
+        default: "bg-transparent hover:bg-transparent data-[state=open]:bg-transparent",
+        active: "bg-primary text-primary-foreground hover:bg-primary/90 data-[state=open]:bg-primary/90",
+      },
       size: {
         xs: "h-6 gap-1 rounded-[calc(var(--radius)-3px)] px-1.5 [&>svg:not([class*='size-'])]:size-3.5",
         sm: "",

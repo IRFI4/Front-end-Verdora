@@ -5,9 +5,23 @@ import LogoIcon from '@assets/icons/logo.svg?react';
 import GoogleIcon from '@assets/icons/google.svg?react';
 import { useState } from 'react';
 import PasswordField from '@components/common/forms/PasswordField';
+import TextField from '@components/common/forms/TextField';
+import { Link } from 'react-router-dom';
 
 const Login = () => {
   const [password, setPassword] = useState('');
+
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    fullName: '',
+    phone: '',
+    confirmPassword: '',
+  });
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
 
   return (
     <LayoutPage>
@@ -39,18 +53,13 @@ const Login = () => {
             </div>
             <form className="flex flex-col items-center justify-center gap-24 w-full">
               <div className="w-full">
-                <label
-                  htmlFor="email"
-                  className="text-[14px] font-medium text-[var(--text-h)]"
-                >
-                  Email Address
-                </label>
-                <input
-                  autoComplete="email"
+                <TextField
+                  type="text"
+                  label="Email Address"
                   id="email"
-                  type="email"
                   placeholder="your@email.com"
-                  className="w-full h-[50px] rounded-[12px] bg-[var(--block-bg)] border border-zinc-300 pl-16 text-[16px] placeholder:text-[16px] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent"
+                  value={formData.email}
+                  onChange={value => handleInputChange('email', value)}
                 />
               </div>
               <div className="w-full">
@@ -75,26 +84,29 @@ const Login = () => {
             </form>
             <div className="w-full flex items-center gap-4">
               <div className="h-px flex-1 bg-zinc-200" />
-              <span className="text-[14px] text-zinc-500">
+              <span className="text-[14px] text-zinc-500 mx-[16px]">
                 Or continue with
               </span>
               <div className="h-px flex-1 bg-zinc-200" />
             </div>
+            <Button
+              variant={'default'}
+              className="w-full cursor-pointer"
+              type="button"
+            >
+              <GoogleIcon className="size-6 w-20 h-20 mr-12 cursor-pointer" />
+              Continue with Google
+            </Button>
+            <p className="text-[16px] text-zinc-500">
+              Don't have an account?{' '}
+              <Link
+                to="/register"
+                className="text-[var(--accent)] hover:underline"
+              >
+                Sign up
+              </Link>
+            </p>
           </div>
-          <Button
-            variant={'default'}
-            className="w-full cursor-pointer"
-            type="button"
-          >
-            <GoogleIcon className="size-6 w-20 h-20 mr-12" />
-            Continue with Google
-          </Button>
-          <p className="text-[16px] text-zinc-500">
-            Don't have an account?{' '}
-            <a href="#" className="text-[var(--accent)] hover:underline">
-              Sign up
-            </a>
-          </p>
         </div>
       </div>
     </LayoutPage>
