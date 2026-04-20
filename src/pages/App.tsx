@@ -1,9 +1,10 @@
 import LayoutPage from '@/layoutPage/LayoutPage';
+import { Home } from './Home';
 
 const App = () => {
   return (
     <LayoutPage>
-      <div></div>
+      <Home />
     </LayoutPage>
   );
 };

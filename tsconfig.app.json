@@ -23,14 +23,15 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@components/*": ["src/components/*"],
-      "@hooks/*": ["src/hooks/*"],
-      "@pages/*": ["src/pages/*"],
-      "@api/*": ["src/api/*"],
-      "@fixtures/*": ["src/fixtures/*"]
+      "@/*": ["./src/*"],
+      "@components/*": ["./src/components/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@pages/*": ["./src/pages/*"],
+      "@api/*": ["./src/api/*"],
+      "@fixtures/*": ["./src/fixtures/*"],
+      "@assets/*": ["./src/assets/*"],
+      "@layoutPage/*": ["./src/layoutPage/*"]
     }
   },
   "include": ["src"]
