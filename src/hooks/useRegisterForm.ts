@@ -15,7 +15,7 @@ export const useRegisterForm = () => {
       email: '',
       password: '',
       confirmPassword: '',
-      acceptedTerms: false as true,
+      acceptedTerms: false,
     },
   });
 };

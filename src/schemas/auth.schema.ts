@@ -18,7 +18,7 @@ export const registerSchema = z
     phoneNumber: phoneNumberSchema,
     email: emailSchema,
     password: passwordSchema,
-    confirmPassword: passwordSchema,
+    confirmPassword: z.string(),
     acceptedTerms: termsSchema,
   })
   .refine(data => data.password === data.confirmPassword, {

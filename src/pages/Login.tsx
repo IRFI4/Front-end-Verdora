@@ -10,7 +10,7 @@ import { useLoginForm, type LoginFormData } from '@hooks/useLoginForm';
 const Login = () => {
   const {
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid },
     watch,
     setValue,
   } = useLoginForm();
@@ -82,7 +82,12 @@ const Login = () => {
                 error={errors.password?.message}
               />
             </div>
-            <Button className="w-full" variant={'active'} type="submit">
+            <Button
+              className="w-full"
+              variant={'active'}
+              type="submit"
+              disabled={!isValid}
+            >
               Sign In
             </Button>
           </form>

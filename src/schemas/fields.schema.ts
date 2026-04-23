@@ -27,6 +27,6 @@ export const usernameSchema = z
 
 export const phoneNumberSchema = z.e164();
 
-export const termsSchema = z.literal(true, {
-  error: 'You must accept the Terms and Conditions',
+export const termsSchema = z.boolean().refine(val => val === true, {
+  message: 'You must accept the Terms and Conditions',
 });

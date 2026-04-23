@@ -47,7 +47,7 @@ export function getPasswordStrength(password: string): PasswordStrength {
     };
   }
 
-  if (normalizedScore == 2) {
+  if (normalizedScore === 2) {
     return {
       score: normalizedScore,
       label: 'Medium strength',

@@ -121,7 +121,7 @@ const Register = () => {
                   type="checkbox"
                   checked={accepted}
                   onChange={() =>
-                    setValue('acceptedTerms', !accepted as true, {
+                    setValue('acceptedTerms', !accepted, {
                       shouldValidate: true,
                     })
                   }
