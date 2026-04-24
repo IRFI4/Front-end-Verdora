@@ -2,19 +2,21 @@ import { Button } from '@components/ui/button';
 import loginPreview from '@assets/images/login-preview.png';
 import LogoIcon from '@assets/icons/logo.svg?react';
 import GoogleIcon from '@assets/icons/google.svg?react';
-import { useState } from 'react';
 import PasswordField from '@components/common/forms/PasswordField';
 import TextField from '@components/common/forms/TextField';
 import { Link } from 'react-router';
+import { useLoginForm, type LoginFormData } from '@hooks/useLoginForm';
 
 const Login = () => {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-  });
+  const {
+    handleSubmit,
+    formState: { errors, isValid },
+    watch,
+    setValue,
+  } = useLoginForm();
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  const onSubmit = (data: LoginFormData) => {
+    console.log(data);
   };
 
   return (
@@ -44,15 +46,21 @@ const Login = () => {
               Access your account and orders
             </p>
           </div>
-          <form className="flex flex-col items-center justify-center gap-24 w-full">
+          <form
+            className="flex flex-col items-center justify-center gap-24 w-full"
+            onSubmit={handleSubmit(onSubmit)}
+          >
             <div className="w-full">
               <TextField
                 type="text"
                 label="Email Address"
                 id="email"
                 placeholder="your@email.com"
-                value={formData.email}
-                onChange={value => handleInputChange('email', value)}
+                value={watch('email')}
+                onChange={value =>
+                  setValue('email', value, { shouldValidate: true })
+                }
+                error={errors.email?.message}
               />
             </div>
             <div className="w-full">
@@ -67,11 +75,19 @@ const Login = () => {
                   </a>
                 }
                 placeholder="Enter your password"
-                value={formData.password}
-                onChange={value => handleInputChange('password', value)}
+                value={watch('password')}
+                onChange={value =>
+                  setValue('password', value, { shouldValidate: true })
+                }
+                error={errors.password?.message}
               />
             </div>
-            <Button className="w-full" variant={'active'} type="submit">
+            <Button
+              className="w-full"
+              variant={'active'}
+              type="submit"
+              disabled={!isValid}
+            >
               Sign In
             </Button>
           </form>

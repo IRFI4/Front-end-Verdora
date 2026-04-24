@@ -1,26 +1,26 @@
 import { Button } from '@components/ui/button';
 import loginPreview from '@assets/images/login-preview.png';
 import LogoIcon from '@assets/icons/logo.svg?react';
-import { useState } from 'react';
 import PasswordField from '@components/common/forms/PasswordField';
 import TextField from '@components/common/forms/TextField';
 import { Link } from 'react-router';
 import CheckIcon from '@assets/icons/checkbox.svg?react';
 import { cn } from '@/lib/utils';
+import { useRegisterForm, type RegisterFormData } from '@hooks/useRegisterForm';
+import PasswordStrength from '@components/common/forms/PasswordStrength';
 
 const Register = () => {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    fullName: '',
-    phone: '',
-    confirmPassword: '',
-  });
+  const {
+    handleSubmit,
+    formState: { errors, isValid },
+    watch,
+    setValue,
+  } = useRegisterForm();
 
-  const [accepted, setAccepted] = useState(false);
+  const accepted = watch('acceptedTerms');
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  const onSubmit = (data: RegisterFormData) => {
+    console.log(data);
   };
 
   return (
@@ -50,15 +50,21 @@ const Register = () => {
               Join Verdora and start your green journey
             </p>
           </div>
-          <form className="flex flex-col items-center justify-center gap-24 w-full">
+          <form
+            className="flex flex-col items-center justify-center gap-24 w-full"
+            onSubmit={handleSubmit(onSubmit)}
+          >
             <div className="w-full">
               <TextField
                 type="text"
-                label="Full Name"
-                id="fullName"
-                placeholder="John Doe"
-                value={formData.fullName}
-                onChange={value => handleInputChange('fullName', value)}
+                label="Username"
+                id="username"
+                placeholder="john_doe"
+                value={watch('username')}
+                onChange={value =>
+                  setValue('username', value, { shouldValidate: true })
+                }
+                error={errors.username?.message}
               />
             </div>
             <div className="w-full">
@@ -67,8 +73,11 @@ const Register = () => {
                 label="Email Address"
                 id="email"
                 placeholder="your@email.com"
-                value={formData.email}
-                onChange={value => handleInputChange('email', value)}
+                value={watch('email')}
+                onChange={value =>
+                  setValue('email', value, { shouldValidate: true })
+                }
+                error={errors.email?.message}
               />
             </div>
             <div className="w-full">
@@ -77,24 +86,33 @@ const Register = () => {
                 label="Phone Number"
                 id="phone"
                 placeholder="+1 (555) 000-0000"
-                value={formData.phone}
-                onChange={value => handleInputChange('phone', value)}
+                value={watch('phoneNumber')}
+                onChange={value =>
+                  setValue('phoneNumber', value, { shouldValidate: true })
+                }
+                error={errors.phoneNumber?.message}
               />
             </div>
             <div className="w-full">
               <PasswordField
                 label="Password"
                 placeholder="Enter your password"
-                value={formData.password}
-                onChange={value => handleInputChange('password', value)}
+                value={watch('password')}
+                onChange={value =>
+                  setValue('password', value, { shouldValidate: true })
+                }
               />
+              <PasswordStrength password={watch('password')} />
             </div>
             <div className="w-full">
               <PasswordField
                 label="Confirm Password"
                 placeholder="Re-enter your password"
-                value={formData.confirmPassword}
-                onChange={value => handleInputChange('confirmPassword', value)}
+                value={watch('confirmPassword')}
+                onChange={value =>
+                  setValue('confirmPassword', value, { shouldValidate: true })
+                }
+                error={errors.confirmPassword?.message}
               />
             </div>
             <div className="w-full">
@@ -102,7 +120,11 @@ const Register = () => {
                 <input
                   type="checkbox"
                   checked={accepted}
-                  onChange={e => setAccepted(e.target.checked)}
+                  onChange={() =>
+                    setValue('acceptedTerms', !accepted, {
+                      shouldValidate: true,
+                    })
+                  }
                   className="sr-only"
                 />
 
@@ -135,13 +157,7 @@ const Register = () => {
               className="w-full"
               variant={'active'}
               type="submit"
-              disabled={
-                !formData.fullName ||
-                !formData.email ||
-                !formData.password ||
-                formData.password !== formData.confirmPassword ||
-                !accepted
-              }
+              disabled={!isValid || !accepted}
             >
               Create Account
             </Button>
