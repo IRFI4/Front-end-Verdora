@@ -4,10 +4,15 @@ import LogoIcon from '@assets/icons/logo.svg?react';
 import GoogleIcon from '@assets/icons/google.svg?react';
 import PasswordField from '@components/common/forms/PasswordField';
 import TextField from '@components/common/forms/TextField';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { useLoginForm, type LoginFormData } from '@hooks/useLoginForm';
+import { useAppDispatch } from '@api/hooks';
+import { login } from '@api/slices/auth';
 
 const Login = () => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
   const {
     handleSubmit,
     formState: { errors, isValid },
@@ -15,8 +20,15 @@ const Login = () => {
     setValue,
   } = useLoginForm();
 
-  const onSubmit = (data: LoginFormData) => {
-    console.log(data);
+  const onSubmit = async (data: LoginFormData) => {
+    try {
+      await dispatch(
+        login({ email: data.email, password: data.password })
+      ).unwrap();
+      navigate('/');
+    } catch (error: any) {
+      console.log(error);
+    }
   };
 
   return (

@@ -3,13 +3,17 @@ import loginPreview from '@assets/images/login-preview.png';
 import LogoIcon from '@assets/icons/logo.svg?react';
 import PasswordField from '@components/common/forms/PasswordField';
 import TextField from '@components/common/forms/TextField';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import CheckIcon from '@assets/icons/checkbox.svg?react';
 import { cn } from '@/lib/utils';
 import { useRegisterForm, type RegisterFormData } from '@hooks/useRegisterForm';
 import PasswordStrength from '@components/common/forms/PasswordStrength';
+import { useAppDispatch } from '@api/hooks';
+import { register } from '@api/slices/auth';
 
 const Register = () => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const {
     handleSubmit,
     formState: { errors, isValid },
@@ -19,8 +23,20 @@ const Register = () => {
 
   const accepted = watch('acceptedTerms');
 
-  const onSubmit = (data: RegisterFormData) => {
-    console.log(data);
+  const onSubmit = async (data: RegisterFormData) => {
+    try {
+      await dispatch(
+        register({
+          name: data.username,
+          email: data.email,
+          phone: data.phoneNumber,
+          password: data.password,
+        })
+      ).unwrap();
+      navigate('/login');
+    } catch (error: any) {
+      console.log(error);
+    }
   };
 
   return (
