@@ -34,8 +34,8 @@ const Register = () => {
         })
       ).unwrap();
       navigate('/login');
-    } catch (error: any) {
-      console.log(error);
+    } catch (error) {
+      console.log((error as { message?: string })?.message);
     }
   };
 

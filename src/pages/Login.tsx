@@ -26,8 +26,8 @@ const Login = () => {
         login({ email: data.email, password: data.password })
       ).unwrap();
       navigate('/');
-    } catch (error: any) {
-      console.log(error);
+    } catch (error) {
+      console.log((error as { message?: string })?.message);
     }
   };
 

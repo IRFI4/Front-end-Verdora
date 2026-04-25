@@ -1,6 +1,8 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { UserType } from '@/types/user';
 import instance from '@api/axiosInstance';
+import { isAxiosError } from 'axios';
+import type { ApiResponse } from '@/types/api';
 
 interface AuthState {
   user: UserType | null;
@@ -16,27 +18,33 @@ const initialState: AuthState = {
   hydrating: true,
 };
 
-export const register = createAsyncThunk(
-  'auth/register',
-  async (
-    userData: {
-      name: string;
-      phone: string;
-      email: string;
-      password: string;
-    },
-    { rejectWithValue }
-  ) => {
-    try {
-      const response = await instance.post('/auth/register', userData);
-      return response.data;
-    } catch (error: any) {
+type RegisterPayload = {
+  name: string;
+  phone: string;
+  email: string;
+  password: string;
+};
+
+export const register = createAsyncThunk<
+  ApiResponse<UserType>,
+  RegisterPayload,
+  { rejectValue: { message: string } }
+>('auth/register', async (userData: RegisterPayload, { rejectWithValue }) => {
+  try {
+    const response = await instance.post('/auth/register', userData);
+    return response.data;
+  } catch (error) {
+    if (isAxiosError(error)) {
       return rejectWithValue(error.response?.data);
     }
   }
-);
+});
 
-export const login = createAsyncThunk(
+export const login = createAsyncThunk<
+  ApiResponse<UserType>,
+  { email: string; password: string },
+  { rejectValue: { message: string } }
+>(
   'auth/login',
   async (
     userData: { email: string; password: string },
@@ -45,34 +53,42 @@ export const login = createAsyncThunk(
     try {
       const response = await instance.post('/auth/login', userData);
       return response.data;
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data);
+    } catch (error) {
+      if (isAxiosError(error)) {
+        return rejectWithValue(error.response?.data);
+      }
     }
   }
 );
 
-export const logout = createAsyncThunk(
-  'auth/logout',
-  async (_, { rejectWithValue }) => {
-    try {
-      await instance.post('/auth/logout');
-    } catch (error: any) {
+export const logout = createAsyncThunk<
+  void,
+  void,
+  { rejectValue: { message: string } }
+>('auth/logout', async (_, { rejectWithValue }) => {
+  try {
+    await instance.post('/auth/logout');
+  } catch (error) {
+    if (isAxiosError(error)) {
       return rejectWithValue(error.response?.data);
     }
   }
-);
+});
 
-export const fetchMe = createAsyncThunk(
-  'auth/me',
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await instance.get('/users/current-user');
-      return response.data;
-    } catch (error: any) {
+export const fetchMe = createAsyncThunk<
+  ApiResponse<UserType>,
+  void,
+  { rejectValue: { message: string } }
+>('auth/me', async (_, { rejectWithValue }) => {
+  try {
+    const response = await instance.get('/users/current-user');
+    return response.data;
+  } catch (error) {
+    if (isAxiosError(error)) {
       return rejectWithValue(error.response?.data);
     }
   }
-);
+});
 
 const authSlice = createSlice({
   name: 'auth',
@@ -91,7 +107,7 @@ const authSlice = createSlice({
       })
       .addCase(register.rejected, (state, action) => {
         state.loading = false;
-        state.error = (action.payload as any)?.message ?? 'Registration failed';
+        state.error = action.payload?.message ?? 'Registration failed';
       })
 
       // login
@@ -105,7 +121,7 @@ const authSlice = createSlice({
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
-        state.error = (action.payload as any)?.message ?? 'Login failed';
+        state.error = action.payload?.message ?? 'Login failed';
       })
 
       // logout
@@ -113,8 +129,9 @@ const authSlice = createSlice({
         state.user = null;
         state.error = null;
       })
-      .addCase(logout.rejected, state => {
+      .addCase(logout.rejected, (state, action) => {
         state.user = null;
+        state.error = action.payload?.message ?? 'Logout failed';
       })
 
       // fetchMe runs on app startup to restore user from cookie
