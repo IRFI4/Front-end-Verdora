@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { UserType } from '@/types/user';
 import instance from '@api/axiosInstance';
 import { isAxiosError } from 'axios';
-import type { ApiResponse } from '@/types/api';
+import type { ApiResponse, ApiErrorResponse } from '@/types/api';
 
 interface AuthState {
   user: UserType | null;
@@ -28,7 +28,7 @@ type RegisterPayload = {
 export const register = createAsyncThunk<
   ApiResponse<UserType>,
   RegisterPayload,
-  { rejectValue: { message: string } }
+  { rejectValue: ApiErrorResponse }
 >('auth/register', async (userData: RegisterPayload, { rejectWithValue }) => {
   try {
     const response = await instance.post('/auth/register', userData);
@@ -43,7 +43,7 @@ export const register = createAsyncThunk<
 export const login = createAsyncThunk<
   ApiResponse<UserType>,
   { email: string; password: string },
-  { rejectValue: { message: string } }
+  { rejectValue: ApiErrorResponse }
 >(
   'auth/login',
   async (
@@ -64,7 +64,7 @@ export const login = createAsyncThunk<
 export const logout = createAsyncThunk<
   void,
   void,
-  { rejectValue: { message: string } }
+  { rejectValue: ApiErrorResponse }
 >('auth/logout', async (_, { rejectWithValue }) => {
   try {
     await instance.post('/auth/logout');
@@ -78,7 +78,7 @@ export const logout = createAsyncThunk<
 export const fetchMe = createAsyncThunk<
   ApiResponse<UserType>,
   void,
-  { rejectValue: { message: string } }
+  { rejectValue: ApiErrorResponse }
 >('auth/me', async (_, { rejectWithValue }) => {
   try {
     const response = await instance.get('/users/current-user');

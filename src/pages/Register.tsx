@@ -33,7 +33,7 @@ const Register = () => {
           password: data.password,
         })
       ).unwrap();
-      navigate('/login');
+      navigate('/');
     } catch (error) {
       console.log((error as { message?: string })?.message);
     }
