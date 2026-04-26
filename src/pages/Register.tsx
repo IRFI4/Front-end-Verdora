@@ -6,7 +6,7 @@ import CheckIcon from '@assets/icons/checkbox.svg?react';
 import { cn } from '@/lib/utils';
 import { useRegisterForm, type RegisterFormData } from '@hooks/useRegisterForm';
 import PasswordStrength from '@components/common/forms/PasswordStrength';
-import AuthForm from '@/components/common/forms/AuthForm';
+import AuthForm from '@/components/layout/Auth';
 
 const Register = () => {
   const {
@@ -31,45 +31,37 @@ const Register = () => {
         className="flex flex-col items-center justify-center gap-24 w-full"
         onSubmit={handleSubmit(onSubmit)}
       >
-        <div className="w-full">
-          <TextField
-            type="text"
-            label="Username"
-            id="username"
-            placeholder="john_doe"
-            value={watch('username')}
-            onChange={value =>
-              setValue('username', value, { shouldValidate: true })
-            }
-            error={errors.username?.message}
-          />
-        </div>
-        <div className="w-full">
-          <TextField
-            type="text"
-            label="Email Address"
-            id="email"
-            placeholder="your@email.com"
-            value={watch('email')}
-            onChange={value =>
-              setValue('email', value, { shouldValidate: true })
-            }
-            error={errors.email?.message}
-          />
-        </div>
-        <div className="w-full">
-          <TextField
-            type="tel"
-            label="Phone Number"
-            id="phone"
-            placeholder="+1 (555) 000-0000"
-            value={watch('phoneNumber')}
-            onChange={value =>
-              setValue('phoneNumber', value, { shouldValidate: true })
-            }
-            error={errors.phoneNumber?.message}
-          />
-        </div>
+        <TextField
+          type="text"
+          label="Username"
+          id="username"
+          placeholder="john_doe"
+          value={watch('username')}
+          onChange={value =>
+            setValue('username', value, { shouldValidate: true })
+          }
+          error={errors.username?.message}
+        />
+        <TextField
+          type="text"
+          label="Email Address"
+          id="email"
+          placeholder="your@email.com"
+          value={watch('email')}
+          onChange={value => setValue('email', value, { shouldValidate: true })}
+          error={errors.email?.message}
+        />
+        <TextField
+          type="tel"
+          label="Phone Number"
+          id="phone"
+          placeholder="+1 (555) 000-0000"
+          value={watch('phoneNumber')}
+          onChange={value =>
+            setValue('phoneNumber', value, { shouldValidate: true })
+          }
+          error={errors.phoneNumber?.message}
+        />
         <div className="w-full">
           <PasswordField
             label="Password"
@@ -81,17 +73,15 @@ const Register = () => {
           />
           <PasswordStrength password={watch('password')} />
         </div>
-        <div className="w-full">
-          <PasswordField
-            label="Confirm Password"
-            placeholder="Re-enter your password"
-            value={watch('confirmPassword')}
-            onChange={value =>
-              setValue('confirmPassword', value, { shouldValidate: true })
-            }
-            error={errors.confirmPassword?.message}
-          />
-        </div>
+        <PasswordField
+          label="Confirm Password"
+          placeholder="Re-enter your password"
+          value={watch('confirmPassword')}
+          onChange={value =>
+            setValue('confirmPassword', value, { shouldValidate: true })
+          }
+          error={errors.confirmPassword?.message}
+        />
         <div className="w-full">
           <label className="flex items-center gap-4 cursor-pointer">
             <input
@@ -121,12 +111,12 @@ const Register = () => {
 
             <span className="text-[14px] text-[var(--text)] [font-family:var(--font-sans)]">
               I agree to the{' '}
-              <a
-                href="/terms"
+              <Link
+                to="/terms"
                 className="text-[var(--accent)] underline underline-offset-4"
               >
                 Terms and Conditions
-              </a>
+              </Link>
             </span>
           </label>
         </div>

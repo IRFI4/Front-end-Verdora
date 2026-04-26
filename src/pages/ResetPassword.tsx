@@ -1,4 +1,4 @@
-import AuthForm from '@/components/common/forms/AuthForm';
+import AuthForm from '@/components/layout/Auth';
 import PasswordField from '@/components/common/forms/PasswordField';
 import PasswordStrength from '@components/common/forms/PasswordStrength';
 import { Button } from '@/components/ui/button';
@@ -23,8 +23,8 @@ const ResetPassword = () => {
 
   return (
     <AuthForm
-      title="Forgot Password?"
-      subtitle="Enter your email and we'll send you a reset link"
+      title="Reset Your Password"
+      subtitle="Enter a new password for your account"
     >
       <form
         className="flex flex-col items-center justify-center gap-24 w-full"
@@ -33,7 +33,7 @@ const ResetPassword = () => {
         <div className="w-full">
           <PasswordField
             label="Password"
-            placeholder="Enter your password"
+            placeholder="At least 8 characters"
             value={watch('password')}
             onChange={value =>
               setValue('password', value, { shouldValidate: true })
@@ -41,24 +41,22 @@ const ResetPassword = () => {
           />
           <PasswordStrength password={watch('password')} />
         </div>
-        <div className="w-full">
-          <PasswordField
-            label="Confirm Password"
-            placeholder="Re-enter your password"
-            value={watch('confirmPassword')}
-            onChange={value =>
-              setValue('confirmPassword', value, { shouldValidate: true })
-            }
-            error={errors.confirmPassword?.message}
-          />
-        </div>
+        <PasswordField
+          label="Confirm Password"
+          placeholder="Re-enter your new password"
+          value={watch('confirmPassword')}
+          onChange={value =>
+            setValue('confirmPassword', value, { shouldValidate: true })
+          }
+          error={errors.confirmPassword?.message}
+        />
         <Button
           className="w-full"
           variant={'active'}
           type="submit"
           disabled={!isValid}
         >
-          Send Reset Link
+          Reset Password
         </Button>
         <Link
           to="/login"

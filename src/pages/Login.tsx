@@ -4,7 +4,7 @@ import PasswordField from '@components/common/forms/PasswordField';
 import TextField from '@components/common/forms/TextField';
 import { Link } from 'react-router';
 import { useLoginForm, type LoginFormData } from '@hooks/useLoginForm';
-import AuthForm from '@/components/common/forms/AuthForm';
+import AuthForm from '@/components/layout/Auth';
 
 const Login = () => {
   const {
@@ -27,38 +27,32 @@ const Login = () => {
         className="flex flex-col items-center justify-center gap-24 w-full"
         onSubmit={handleSubmit(onSubmit)}
       >
-        <div className="w-full">
-          <TextField
-            type="text"
-            label="Email Address"
-            id="email"
-            placeholder="your@email.com"
-            value={watch('email')}
-            onChange={value =>
-              setValue('email', value, { shouldValidate: true })
-            }
-            error={errors.email?.message}
-          />
-        </div>
-        <div className="w-full">
-          <PasswordField
-            label="Password"
-            labelRight={
-              <a
-                href="#"
-                className="text-sm text-[var(--accent)] hover:underline"
-              >
-                Forgot password?
-              </a>
-            }
-            placeholder="Enter your password"
-            value={watch('password')}
-            onChange={value =>
-              setValue('password', value, { shouldValidate: true })
-            }
-            error={errors.password?.message}
-          />
-        </div>
+        <TextField
+          type="text"
+          label="Email Address"
+          id="email"
+          placeholder="your@email.com"
+          value={watch('email')}
+          onChange={value => setValue('email', value, { shouldValidate: true })}
+          error={errors.email?.message}
+        />
+        <PasswordField
+          label="Password"
+          labelRight={
+            <Link
+              to="/forgot-password"
+              className="text-sm text-[var(--accent)] hover:underline"
+            >
+              Forgot password?
+            </Link>
+          }
+          placeholder="Enter your password"
+          value={watch('password')}
+          onChange={value =>
+            setValue('password', value, { shouldValidate: true })
+          }
+          error={errors.password?.message}
+        />
         <Button
           className="w-full"
           variant={'active'}

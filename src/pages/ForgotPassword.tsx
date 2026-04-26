@@ -1,4 +1,4 @@
-import AuthForm from '@/components/common/forms/AuthForm';
+import AuthForm from '@/components/layout/Auth';
 import TextField from '@/components/common/forms/TextField';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router';
@@ -29,19 +29,15 @@ const ForgotPassword = () => {
         className="flex flex-col items-center justify-center gap-24 w-full"
         onSubmit={handleSubmit(onSubmit)}
       >
-        <div className="w-full">
-          <TextField
-            type="text"
-            label="Email Address"
-            id="email"
-            placeholder="your@email.com"
-            value={watch('email')}
-            onChange={value =>
-              setValue('email', value, { shouldValidate: true })
-            }
-            error={errors.email?.message}
-          />
-        </div>
+        <TextField
+          type="text"
+          label="Email Address"
+          id="email"
+          placeholder="your@email.com"
+          value={watch('email')}
+          onChange={value => setValue('email', value, { shouldValidate: true })}
+          error={errors.email?.message}
+        />
         <Button
           className="w-full"
           variant={'active'}
