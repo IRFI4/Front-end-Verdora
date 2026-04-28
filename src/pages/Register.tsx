@@ -1,14 +1,22 @@
 import { Button } from '@components/ui/button';
 import PasswordField from '@components/common/forms/PasswordField';
 import TextField from '@components/common/forms/TextField';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import CheckIcon from '@assets/icons/checkbox.svg?react';
 import { cn } from '@/lib/utils';
 import { useRegisterForm, type RegisterFormData } from '@hooks/useRegisterForm';
 import PasswordStrength from '@components/common/forms/PasswordStrength';
 import AuthForm from '@/components/layout/Auth';
+import { useAppDispatch, useAppSelector } from '@api/hooks';
+import { register } from '@api/slices/auth';
+import { rateLimit } from '@/utils/rateLimit';
+import { useMemo } from 'react';
 
 const Register = () => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const { loading, error } = useAppSelector(state => state.auth);
+
   const {
     handleSubmit,
     formState: { errors, isValid },
@@ -17,9 +25,19 @@ const Register = () => {
   } = useRegisterForm();
 
   const accepted = watch('acceptedTerms');
+  const canSubmit = useMemo(() => rateLimit(2000), []);
 
-  const onSubmit = (data: RegisterFormData) => {
-    console.log(data);
+  const onSubmit = async (data: RegisterFormData) => {
+    if (!canSubmit()) return;
+    await dispatch(
+      register({
+        name: data.username,
+        email: data.email,
+        phone: data.phoneNumber,
+        password: data.password,
+      })
+    ).unwrap();
+    navigate('/');
   };
 
   return (
@@ -108,17 +126,35 @@ const Register = () => {
                 )}
               />
             </div>
-
-            <span className="text-[14px] text-[var(--text)] [font-family:var(--font-sans)]">
-              I agree to the{' '}
-              <Link
-                to="/terms"
-                className="text-[var(--accent)] underline underline-offset-4"
-              >
-                Terms and Conditions
-              </Link>
-            </span>
-          </label>
+                <span className="text-[14px] text-[var(--text)] [font-family:var(--font-sans)]">
+                  I agree to the{' '}
+                  <Link
+                    to="/terms"
+                    className="text-[var(--accent)] underline underline-offset-4"
+                  >
+                    Terms and Conditions
+                  </Link>
+                </span>
+              </label>
+            </div>
+            {error && (
+              <p className="text-red-500 text-sm mt-2 text-center">{error}</p>
+            )}
+            <Button
+              className="w-full"
+              variant={'active'}
+              type="submit"
+              disabled={!isValid || !accepted || loading}
+            >
+              {loading ? 'Creating...' : 'Create Account'}
+            </Button>
+          </form>
+          <p className="text-[16px] text-zinc-500 [font-family:var(--font-sans)]">
+            Already have an account?{' '}
+            <Link to="/login" className="text-[var(--accent)] hover:underline">
+              Sign in
+            </Link>
+          </p>
         </div>
         <Button
           className="w-full"

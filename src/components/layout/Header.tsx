@@ -1,8 +1,18 @@
 import { Link } from 'react-router';
 import LogoIcon from '@assets/icons/logo.svg?react';
 import { Button } from '@components/ui/button';
+import { useAppDispatch, useAppSelector } from '@api/hooks';
+import { logout } from '@api/slices/auth';
+import { Spinner } from '@components/ui/spinner';
 
 const Header = () => {
+  const dispatch = useAppDispatch();
+  const { user, hydrating } = useAppSelector(state => state.auth);
+
+  const handleLogout = () => {
+    dispatch(logout());
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-zinc-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
       <div className="container mx-auto px-16 md:px-24">
@@ -94,12 +104,30 @@ const Header = () => {
               </span>
             </Link>
 
-            {/* Profile / Login */}
-            <Link to="/login">
-              <Button variant="active" className="h-36 px-20 text-[14px]">
-                Sign In
-              </Button>
-            </Link>
+            {hydrating ? (
+              <Spinner className="h-24 w-24" />
+            ) : user ? (
+              <div className="flex items-center gap-12">
+                <Link to="/profile">
+                  <div className="flex size-36 items-center justify-center rounded-full bg-[var(--accent)] text-white text-[13px] font-bold">
+                    {user.name?.charAt(0).toUpperCase() ?? '?'}
+                  </div>
+                </Link>
+                <Button
+                  variant="default"
+                  className="h-36 px-20 text-[14px]"
+                  onClick={handleLogout}
+                >
+                  Sign Out
+                </Button>
+              </div>
+            ) : (
+              <Link to="/login">
+                <Button variant="active" className="h-36 px-20 text-[14px]">
+                  Sign In
+                </Button>
+              </Link>
+            )}
 
             {/* Mobile menu button */}
             <button
