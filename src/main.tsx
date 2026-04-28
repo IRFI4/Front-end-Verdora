@@ -1,4 +1,5 @@
-import { StrictMode } from 'react';
+import { Provider } from 'react-redux';
+import { store } from '@api/store';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Route, Routes } from 'react-router';
 import '@/index.css';
@@ -7,7 +8,7 @@ import Register from '@pages/Register';
 import { Home } from '@pages/Home';
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
+  <Provider store={store}>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
@@ -15,5 +16,5 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/register" element={<Register />} />
       </Routes>
     </BrowserRouter>
-  </StrictMode>
+  </Provider>
 );
