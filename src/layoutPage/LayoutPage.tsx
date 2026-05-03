@@ -6,13 +6,13 @@ import { fetchMe } from '@api/slices/auth';
 
 const LayoutPage = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useAppDispatch();
-  const { user, hydrating } = useAppSelector(state => state.auth);
+  const { initialized } = useAppSelector(state => state.auth);
 
   useEffect(() => {
-    if (!hydrating && !user) {
+    if (!initialized) {
       dispatch(fetchMe());
     }
-  }, [dispatch, user, hydrating]);
+  }, [dispatch, initialized]);
 
   return (
     <div className="flex min-h-screen flex-col">

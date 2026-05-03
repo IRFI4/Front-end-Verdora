@@ -10,6 +10,7 @@ interface AuthState {
   loading: boolean;
   error: string | null;
   hydrating: boolean;
+  initialized: boolean;
 }
 
 const initialState: AuthState = {
@@ -17,6 +18,7 @@ const initialState: AuthState = {
   loading: false,
   error: null,
   hydrating: true,
+  initialized: false,
 };
 
 export const register = createAsyncThunk<
@@ -139,10 +141,12 @@ const authSlice = createSlice({
       .addCase(fetchMe.fulfilled, (state, action) => {
         state.hydrating = false;
         state.user = action.payload.data;
+        state.initialized = true;
       })
       .addCase(fetchMe.rejected, state => {
         state.hydrating = false;
         state.user = null;
+        state.initialized = true;
       });
   },
 });
