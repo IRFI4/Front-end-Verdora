@@ -8,7 +8,9 @@ pnpm-debug.log*
 lerna-debug.log*
 
 # GitHub Copilot local skills
-.github/
+.github/*
+!.github/workflows/
+!.github/workflows/**
 
 node_modules
 dist
@@ -27,4 +29,3 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-
