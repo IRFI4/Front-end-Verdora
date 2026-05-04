@@ -5,6 +5,24 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>team-challenge</title>
+    <!-- SPA redirect handler for GitHub Pages -->
+    <script>
+      (function() {
+        const redirect = sessionStorage.redirect;
+        delete sessionStorage.redirect;
+        if (redirect && redirect !== location.href) {
+          history.replaceState(null, null, redirect);
+        }
+        
+        const query = window.location.search;
+        if (query.startsWith('?p=')) {
+          const route = decodeURIComponent(query.slice(3).split('&')[0]);
+          window.history.replaceState(null, '', 
+            window.location.pathname + route + window.location.search.replace(/^\?p=[^&]+&?/, '?')
+          );
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Redirecting...</title>
+    <script>
+      // SPA redirect for GitHub Pages
+      // Convert the path to a query parameter for index.html to handle
+      sessionStorage.redirect = location.href;
+      const path = location.pathname.replace('/Front-end-Verdora', '');
+      const query = location.search.slice(1);
+      window.location.replace(
+        '/Front-end-Verdora/?p=' + 
+        encodeURIComponent(path) + 
+        (query ? '&' + query : '')
+      );
+    </script>
+  </head>
+  <body></body>
+</html>
