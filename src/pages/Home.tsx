@@ -1,4 +1,4 @@
-import LayoutPage from '@/layoutPage/LayoutPage';
+import LayoutPage from '@components/layout/LayoutPage';
 
 export const Home = () => {
   return (

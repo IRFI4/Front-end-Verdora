@@ -31,6 +31,10 @@ const Login = () => {
     navigate('/');
   };
 
+  const handleGoogleLogin = () => {
+    window.location.href = `${import.meta.env.VITE_API_URL}/oauth2/authorization/google`;
+  };
+
   return (
     <AuthForm
       title="Sign in to Verdora"
@@ -89,6 +93,7 @@ const Login = () => {
         variant={'default'}
         className="w-full cursor-pointer"
         type="button"
+        onClick={handleGoogleLogin}
       >
         <GoogleIcon className="size-6 w-20 h-20 mr-12" />
         Continue with Google
