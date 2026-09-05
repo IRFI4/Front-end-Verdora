@@ -1,4 +1,10 @@
-export type OrderStatus = 'PENDING' | 'PAID' | 'SHIPPED' | 'CANCELLED';
+export type OrderStatus =
+  | 'PENDING'
+  | 'PAID'
+  | 'CONFIRMED'
+  | 'PENDING_PAYMENT'
+  | 'SHIPPED'
+  | 'CANCELLED';
 
 export type OrderItems = {
   orderItemId: number;
