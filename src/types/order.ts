@@ -1,4 +1,12 @@
-export type OrderStatus = 'PENDING' | 'PAID' | 'SHIPPED' | 'CANCELLED';
+export type OrderStatus =
+  | 'PENDING'
+  | 'PAID'
+  | 'CONFIRMED'
+  | 'PENDING_PAYMENT'
+  | 'SHIPPED'
+  | 'IN_TRANSIT'
+  | 'DELIVERED'
+  | 'CANCELLED';
 
 export type OrderItems = {
   orderItemId: number;
@@ -7,6 +15,8 @@ export type OrderItems = {
   quantity: number;
   priceAtPurchase: number;
   subtotal: number;
+  imageUrl?: string | null;
+  category?: string | null;
 };
 
 export type Order = {
@@ -15,6 +25,14 @@ export type Order = {
   totalPrice: number;
   items: OrderItems[];
   createdAt: string;
+  estimatedDeliveryDate?: string | null;
+  trackingNumber?: string | null;
+  trackingUrl?: string | null;
+  carrier?: string | null;
+  deliveryMethod?: string | null;
+  shippingAddress?: string | null;
+  paymentMethod?: string | null;
+  invoiceUrl?: string | null;
 };
 
 export interface UpdateOrderPayload {

@@ -2,7 +2,8 @@ import { useState, useMemo } from 'react';
 import AdminLayout from '@components/layout/pageLayout/AdminLayout';
 import AdminSectionHeader from '@components/common/section/AdminSectionHeader';
 import { Button } from '@components/ui/button';
-import { Badge } from '@components/ui/badge';
+import OrderStatusBadge from '@components/common/Badge/OrderStatusBadge';
+import { formatOrderDate } from '@/utils/order.utils';
 import {
   Card,
   CardContent,
@@ -42,7 +43,6 @@ import {
   DashboardMetricCard,
   DashboardMetricCardSkeleton,
 } from '@components/common/cards/DashboardMetricCard';
-import { cn } from '@/lib/utils';
 import { Skeleton } from '@components/ui/skeleton';
 import ErrorSection from '@components/common/section/ErrorSection';
 import { EmptySection } from '@components/common/section/EmptySection';
@@ -114,15 +114,7 @@ const OrderManagement = () => {
     });
   };
 
-  const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString('en-US', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
+  const formatDate = (dateStr: string) => formatOrderDate(dateStr);
 
   return (
     <AdminLayout>
@@ -297,21 +289,7 @@ const OrderManagement = () => {
                         ${order.totalPrice.toFixed(2)}
                       </TableCell>
                       <TableCell className="text-center">
-                        <Badge
-                          variant="outline"
-                          className={cn('border font-medium text-sm', {
-                            'text-amber-700 bg-amber-50 border-amber-200':
-                              order.status === 'PENDING',
-                            'text-emerald-700 bg-emerald-50 border-emerald-200':
-                              order.status === 'PAID',
-                            'text-blue-700 bg-blue-50 border-blue-200':
-                              order.status === 'SHIPPED',
-                            'text-rose-700 bg-rose-50 border-rose-200':
-                              order.status === 'CANCELLED',
-                          })}
-                        >
-                          {order.status}
-                        </Badge>
+                        <OrderStatusBadge status={order.status} />
                       </TableCell>
                       <TableCell className="text-right pr-6">
                         <div className="flex items-center justify-end gap-2">
@@ -377,21 +355,7 @@ const OrderManagement = () => {
             <div className="flex items-center justify-between p-3 rounded-lg bg-muted/40 border border-border">
               <div className="flex items-center gap-2">
                 <span className="text-sm font-medium">Status:</span>
-                <Badge
-                  variant="outline"
-                  className={cn('border font-medium text-sm', {
-                    'text-amber-700 bg-amber-50 border-amber-200':
-                      selectedOrderDetails.status === 'PENDING',
-                    'text-emerald-700 bg-emerald-50 border-emerald-200':
-                      selectedOrderDetails.status === 'PAID',
-                    'text-blue-700 bg-blue-50 border-blue-200':
-                      selectedOrderDetails.status === 'SHIPPED',
-                    'text-rose-700 bg-rose-50 border-rose-200':
-                      selectedOrderDetails.status === 'CANCELLED',
-                  })}
-                >
-                  {selectedOrderDetails.status}
-                </Badge>
+                <OrderStatusBadge status={selectedOrderDetails.status} />
               </div>
               <Button
                 variant="outline"
