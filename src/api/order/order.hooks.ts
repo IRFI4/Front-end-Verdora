@@ -4,6 +4,8 @@ import type { AxiosError } from 'axios';
 import type { ApiErrorResponse } from '@/types/api';
 import type { Order, UpdateOrderPayload } from '@/types/order';
 
+import { isFinalOrderStatus } from '@/utils/order.utils';
+
 type OrderAxiosError = AxiosError<ApiErrorResponse>;
 
 export const useCreateOrder = () => {
@@ -33,8 +35,11 @@ export const useCancelOrder = () => {
 
   return useMutation<Order, OrderAxiosError, number>({
     mutationFn: orderId => orderService.cancelOrder(orderId),
-    onSuccess: () => {
+    onSettled: (_data, _error, orderId) => {
       queryClient.invalidateQueries({ queryKey: ['orders'] });
+      if (orderId) {
+        queryClient.invalidateQueries({ queryKey: ['orders', orderId] });
+      }
     },
   });
 };
@@ -43,7 +48,17 @@ export const useOrderById = (orderId: number) => {
   return useQuery<Order, OrderAxiosError>({
     queryKey: ['orders', orderId],
     queryFn: () => orderService.getOrderById(orderId),
-    enabled: !!orderId,
+    enabled: Boolean(orderId && !isNaN(orderId) && orderId > 0),
+    refetchInterval: query => {
+      if (query.state.status === 'error' || query.state.error) return false;
+
+      const order = query.state.data;
+      if (!order) return false;
+
+      return isFinalOrderStatus(order.status) ? false : 30_000;
+    },
+    refetchIntervalInBackground: false,
+    retry: 1,
   });
 };
 
@@ -51,5 +66,16 @@ export const useAllOrders = () => {
   return useQuery<Order[], OrderAxiosError>({
     queryKey: ['orders'],
     queryFn: () => orderService.getAllOrders(),
+    refetchInterval: query => {
+      if (query.state.status === 'error' || query.state.error) return false;
+
+      const orders = query.state.data;
+      if (!orders || orders.length === 0) return false;
+
+      const hasActiveOrders = orders.some(o => !isFinalOrderStatus(o.status));
+      return hasActiveOrders ? 30_000 : false;
+    },
+    refetchIntervalInBackground: false,
+    retry: 1,
   });
 };
