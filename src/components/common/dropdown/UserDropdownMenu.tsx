@@ -12,6 +12,7 @@ import { USER_MENU } from '@fixtures/sidebar.fixture';
 import { useAppDispatch } from '@api/hooks';
 import { logout } from '@api/auth/auth.actions';
 import { useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { Skeleton } from '@components/ui/skeleton';
 import { SidebarMenuButton, useSidebar } from '@components/ui/sidebar';
 import type React from 'react';
@@ -32,10 +33,12 @@ const UserDropdownMenu = ({
   children,
 }: UserFooterProps) => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { isMobile } = useSidebar();
   const dispatch = useAppDispatch();
   const handleLogout = () => {
     dispatch(logout());
+    queryClient.clear();
     navigate('/login');
   };
 

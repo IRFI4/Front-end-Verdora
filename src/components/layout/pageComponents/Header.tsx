@@ -26,7 +26,7 @@ const Header = ({ onOpenMenu }: HeaderProps) => {
 
   const handleLogout = () => {
     dispatch(logout());
-    queryClient.removeQueries({ queryKey: ['cart'] });
+    queryClient.clear();
   };
 
   return (

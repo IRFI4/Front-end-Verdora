@@ -9,6 +9,8 @@ import Home from '@pages/Home';
 import ForgotPassword from '@pages/auth/ForgotPassword';
 import ResetPassword from '@pages/auth/ResetPassword';
 import Cart from '@pages/Cart';
+import Orders from '@pages/Orders';
+import OrderDetails from '@pages/OrderDetails';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import AdminCategoriesPage from '@pages/admin/CategoryPage';
 import { TooltipProvider } from '@components/ui/tooltip';
@@ -62,7 +64,22 @@ createRoot(document.getElementById('root')!).render(
             <Route path="/cart" element={<Cart />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/order-result" element={<OrderResult />} />
-
+            <Route
+              path="/orders"
+              element={
+                <ProtectedRoute requireAuth={true}>
+                  <Orders />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/orders/:orderId"
+              element={
+                <ProtectedRoute requireAuth={true}>
+                  <OrderDetails />
+                </ProtectedRoute>
+              }
+            />
             <Route path="/admin">
               <Route
                 index
