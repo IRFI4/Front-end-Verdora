@@ -27,10 +27,14 @@ const Login = () => {
 
   const onSubmit = async (data: LoginFormData) => {
     if (!canSubmit()) return;
-    await dispatch(
-      login({ email: data.email, password: data.password })
-    ).unwrap();
-    navigate('/');
+    try {
+      await dispatch(
+        login({ email: data.email, password: data.password })
+      ).unwrap();
+      navigate('/');
+    } catch {
+      // Error handled by auth slice and displayed in UI
+    }
   };
 
   const handleGoogleLogin = () => {
