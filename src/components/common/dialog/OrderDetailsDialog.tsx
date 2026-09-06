@@ -1,7 +1,10 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import type { Order } from '@/types/order';
 import DialogComponent from '@components/common/dialog/DialogComponent';
 import OrderStatusBadge from '@/components/common/Badge/OrderStatusBadge';
+import { Button } from '@components/ui/button';
+import { ExternalLink, Download } from 'lucide-react';
 import {
   Table,
   TableBody,
@@ -14,6 +17,7 @@ import {
   formatOrderDate,
   formatOrderPrice,
   isOrderCancellable,
+  printOrderInvoice,
 } from '@/utils/order.utils';
 
 type OrderDetailsDialogProps = {
@@ -34,6 +38,7 @@ export const OrderDetailsDialog: React.FC<OrderDetailsDialogProps> = ({
   if (!order) return null;
 
   const cancellable = isOrderCancellable(order.status);
+  const items = order.items ?? [];
 
   return (
     <DialogComponent
@@ -53,8 +58,34 @@ export const OrderDetailsDialog: React.FC<OrderDetailsDialogProps> = ({
     >
       <div className="space-y-4 py-2">
         <div className="flex items-center justify-between p-3 rounded-lg bg-muted/40 border border-border">
-          <span className="text-sm font-medium">Order Status:</span>
-          <OrderStatusBadge status={order.status} />
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium">Order Status:</span>
+            <OrderStatusBadge status={order.status} />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => printOrderInvoice(order)}
+              className="h-7 px-2 text-xs gap-1 cursor-pointer"
+              title="Download or print invoice"
+            >
+              <Download className="size-3" />
+              <span>Invoice</span>
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              asChild
+              className="h-7 px-2 text-xs gap-1"
+            >
+              <Link to={`/orders/${order.orderId}`}>
+                <span>Full Page</span>
+                <ExternalLink className="size-3" />
+              </Link>
+            </Button>
+          </div>
         </div>
 
         <div className="rounded-md border border-border overflow-hidden">
@@ -68,22 +99,33 @@ export const OrderDetailsDialog: React.FC<OrderDetailsDialogProps> = ({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {order.items.map(item => (
-                <TableRow key={item.orderItemId}>
-                  <TableCell className="text-sm font-medium">
-                    {item.productName}
-                  </TableCell>
-                  <TableCell className="text-center text-sm">
-                    {item.quantity}
-                  </TableCell>
-                  <TableCell className="text-right text-sm">
-                    {formatOrderPrice(item.priceAtPurchase)}
-                  </TableCell>
-                  <TableCell className="text-right text-sm font-medium">
-                    {formatOrderPrice(item.subtotal)}
+              {items.length === 0 ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={4}
+                    className="text-center text-sm text-muted-foreground py-6"
+                  >
+                    No item details available.
                   </TableCell>
                 </TableRow>
-              ))}
+              ) : (
+                items.map(item => (
+                  <TableRow key={item.orderItemId}>
+                    <TableCell className="text-sm font-medium">
+                      {item.productName}
+                    </TableCell>
+                    <TableCell className="text-center text-sm">
+                      {item.quantity}
+                    </TableCell>
+                    <TableCell className="text-right text-sm">
+                      {formatOrderPrice(item.priceAtPurchase)}
+                    </TableCell>
+                    <TableCell className="text-right text-sm font-medium">
+                      {formatOrderPrice(item.subtotal)}
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </div>

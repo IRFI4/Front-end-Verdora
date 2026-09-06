@@ -9,7 +9,6 @@ import { PaginationComponent } from '@components/common/pagination/Pagination';
 import { EmptySection } from '@components/common/section/EmptySection';
 import ErrorSection from '@components/common/section/ErrorSection';
 import AlertComponent from '@components/common/dialog/AlertComponent';
-import OrderDetailsDialog from '@components/common/dialog/OrderDetailsDialog';
 import { sortOrdersNewestFirst } from '@/utils/order.utils';
 import {
   ShoppingBag,
@@ -36,8 +35,6 @@ const Orders = () => {
   const cancelMutation = useCancelOrder();
 
   const [currentPage, setCurrentPage] = useState(0);
-  const [selectedOrderDetails, setSelectedOrderDetails] =
-    useState<Order | null>(null);
   const [cancellingOrder, setCancellingOrder] = useState<Order | null>(null);
   const [successNotice, setSuccessNotice] = useState<string | null>(null);
   const [cancelErrorNotice, setCancelErrorNotice] = useState<string | null>(
@@ -49,11 +46,13 @@ const Orders = () => {
   }, [apiOrders]);
 
   const totalPages = Math.ceil(sortedOrders.length / ORDERS_PER_PAGE);
+  const safeCurrentPage =
+    totalPages > 0 ? Math.min(currentPage, totalPages - 1) : 0;
 
   const paginatedOrders = useMemo(() => {
-    const startIndex = currentPage * ORDERS_PER_PAGE;
+    const startIndex = safeCurrentPage * ORDERS_PER_PAGE;
     return sortedOrders.slice(startIndex, startIndex + ORDERS_PER_PAGE);
-  }, [sortedOrders, currentPage]);
+  }, [sortedOrders, safeCurrentPage]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -71,12 +70,6 @@ const Orders = () => {
           `Order #${targetOrderId} has been successfully cancelled.`
         );
         setCancelErrorNotice(null);
-
-        if (selectedOrderDetails?.orderId === targetOrderId) {
-          setSelectedOrderDetails(prev =>
-            prev ? { ...prev, status: 'CANCELLED' } : null
-          );
-        }
       },
       onError: err => {
         const errorMsg =
@@ -84,6 +77,7 @@ const Orders = () => {
           err?.message ||
           `Failed to cancel Order #${targetOrderId}. Please try again.`;
         setCancelErrorNotice(errorMsg);
+        refetch();
       },
     });
   };
@@ -175,7 +169,7 @@ const Orders = () => {
               <OrderCardSkeleton key={index} />
             ))}
           </div>
-        ) : isError ? (
+        ) : isError && !apiOrders ? (
           <div className="rounded-xl border border-border bg-card p-6 shadow-xs">
             <ErrorSection
               title="Unable to load orders"
@@ -214,12 +208,12 @@ const Orders = () => {
               <span>
                 Showing{' '}
                 <strong className="text-foreground">
-                  {currentPage * ORDERS_PER_PAGE + 1}
+                  {safeCurrentPage * ORDERS_PER_PAGE + 1}
                 </strong>{' '}
                 to{' '}
                 <strong className="text-foreground">
                   {Math.min(
-                    (currentPage + 1) * ORDERS_PER_PAGE,
+                    (safeCurrentPage + 1) * ORDERS_PER_PAGE,
                     sortedOrders.length
                   )}
                 </strong>{' '}
@@ -240,7 +234,6 @@ const Orders = () => {
                     cancelMutation.isPending &&
                     cancellingOrder?.orderId === order.orderId
                   }
-                  onViewDetails={order => setSelectedOrderDetails(order)}
                   onCancelClick={order => {
                     setCancelErrorNotice(null);
                     cancelMutation.reset();
@@ -253,7 +246,7 @@ const Orders = () => {
             {totalPages > 1 && (
               <div className="pt-4 flex justify-center">
                 <PaginationComponent
-                  currentPage={currentPage}
+                  currentPage={safeCurrentPage}
                   totalPages={totalPages}
                   onPageChange={handlePageChange}
                 />
@@ -261,23 +254,6 @@ const Orders = () => {
             )}
           </div>
         )}
-
-        <OrderDetailsDialog
-          order={selectedOrderDetails}
-          open={!!selectedOrderDetails}
-          onOpenChange={open => {
-            if (!open) setSelectedOrderDetails(null);
-          }}
-          isCancelling={
-            cancelMutation.isPending &&
-            cancellingOrder?.orderId === selectedOrderDetails?.orderId
-          }
-          onCancelClick={order => {
-            setCancelErrorNotice(null);
-            cancelMutation.reset();
-            setCancellingOrder(order);
-          }}
-        />
 
         <AlertComponent
           title="Cancel Order"

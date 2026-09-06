@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from '@components/ui/card';
 import { Button } from '@components/ui/button';
-import { Package, XCircle, Eye, Loader2 } from 'lucide-react';
+import { Package, XCircle, Eye, Loader2, ArrowRight } from 'lucide-react';
 import type { Order } from '@/types/order';
 import OrderStatusBadge from '@components/common/Badge/OrderStatusBadge';
 import {
@@ -16,11 +16,13 @@ import {
   isOrderCancellable,
 } from '@/utils/order.utils';
 import React from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 
 export interface OrderCardProps {
   order: Order;
   onCancelClick?: (order: Order) => void;
   onViewDetails?: (order: Order) => void;
+  onClick?: (order: Order) => void;
   isCancelling?: boolean;
 }
 
@@ -28,24 +30,51 @@ export const OrderCard: React.FC<OrderCardProps> = ({
   order,
   onCancelClick,
   onViewDetails,
+  onClick,
   isCancelling = false,
 }) => {
+  const navigate = useNavigate();
   const cancellable = isOrderCancellable(order.status);
   const formattedDate = formatOrderDate(order.createdAt);
   const totalAmount = formatOrderPrice(order.totalPrice);
-  const totalItemCount = order.items.reduce(
-    (sum, item) => sum + item.quantity,
-    0
-  );
+  const items = order.items ?? [];
+  const totalItemCount = items.reduce((sum, item) => sum + item.quantity, 0);
+
+  const handleCardClick = () => {
+    if (onClick) {
+      onClick(order);
+    } else {
+      navigate(`/orders/${order.orderId}`);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      if (e.target === e.currentTarget) {
+        e.preventDefault();
+        handleCardClick();
+      }
+    }
+  };
 
   return (
-    <Card className="flex flex-col h-full bg-card border-border hover:shadow-md transition-shadow">
+    <Card
+      role="button"
+      tabIndex={0}
+      onClick={handleCardClick}
+      onKeyDown={handleKeyDown}
+      className="flex flex-col h-full bg-card border-border hover:shadow-md hover:border-primary/50 transition-all cursor-pointer group focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 select-none sm:select-auto"
+      aria-label={`Order #${order.orderId}, status ${order.status}. Click to view details.`}
+    >
       <CardHeader className="pb-3">
         <div className="flex justify-between items-start gap-4">
           <div className="space-y-1">
-            <CardTitle className="text-lg font-semibold tracking-tight">
-              Order #{order.orderId}
-            </CardTitle>
+            <div className="flex items-center gap-1.5">
+              <CardTitle className="text-lg font-semibold tracking-tight group-hover:text-primary transition-colors">
+                Order #{order.orderId}
+              </CardTitle>
+              <ArrowRight className="size-4 text-muted-foreground opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200" />
+            </div>
             <CardDescription className="text-xs text-muted-foreground">
               {formattedDate}
             </CardDescription>
@@ -55,7 +84,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
       </CardHeader>
 
       <CardContent className="flex-1 space-y-4">
-        <div className="flex items-center justify-between rounded-lg bg-muted/40 px-3 py-2.5 border border-border/50 text-sm">
+        <div className="flex items-center justify-between rounded-lg bg-muted/40 px-3 py-2.5 border border-border/50 text-sm group-hover:bg-muted/60 transition-colors">
           <div className="flex items-center gap-2 font-medium">
             <Package
               className="size-4 text-primary shrink-0"
@@ -74,7 +103,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
         </div>
 
         <ul className="text-sm space-y-2 border-t border-border/40 pt-3">
-          {order.items.slice(0, 3).map(item => (
+          {items.slice(0, 3).map(item => (
             <li
               key={item.orderItemId}
               className="flex justify-between items-center gap-2 text-xs"
@@ -90,33 +119,55 @@ export const OrderCard: React.FC<OrderCardProps> = ({
               </span>
             </li>
           ))}
-          {order.items.length > 3 && (
+          {items.length > 3 && (
             <li className="text-xs text-muted-foreground pt-0.5">
-              + {order.items.length - 3} more item
-              {order.items.length - 3 > 1 ? 's' : ''}...
+              + {items.length - 3} more item
+              {items.length - 3 > 1 ? 's' : ''}...
             </li>
           )}
         </ul>
       </CardContent>
 
       <CardFooter className="flex items-center justify-between gap-2 pt-3 border-t border-border bg-muted/20">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => onViewDetails?.(order)}
-          className="text-xs cursor-pointer gap-1.5"
-          aria-label={`View details for order #${order.orderId}`}
-        >
-          <Eye className="size-3.5" aria-hidden="true" />
-          <span>Details</span>
-        </Button>
+        {onViewDetails ? (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={e => {
+              e.stopPropagation();
+              onViewDetails(order);
+            }}
+            className="text-xs cursor-pointer gap-1.5"
+            aria-label={`View details for order #${order.orderId}`}
+          >
+            <Eye className="size-3.5" aria-hidden="true" />
+            <span>Details</span>
+          </Button>
+        ) : (
+          <Button
+            variant="outline"
+            size="sm"
+            asChild
+            onClick={e => e.stopPropagation()}
+            className="text-xs cursor-pointer gap-1.5 hover:border-primary/50"
+            aria-label={`View details for order #${order.orderId}`}
+          >
+            <Link to={`/orders/${order.orderId}`}>
+              <Eye className="size-3.5" aria-hidden="true" />
+              <span>Details</span>
+            </Link>
+          </Button>
+        )}
 
         <div className="flex items-center gap-2">
           <Button
             variant={cancellable ? 'destructive' : 'secondary'}
             size="sm"
             disabled={!cancellable || isCancelling}
-            onClick={() => onCancelClick?.(order)}
+            onClick={e => {
+              e.stopPropagation();
+              onCancelClick?.(order);
+            }}
             className="text-xs cursor-pointer gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
             title={
               cancellable
