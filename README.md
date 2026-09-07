@@ -63,32 +63,6 @@ The built assets will be generated in the `dist/` directory.
 
 ---
 
-## Running with Docker
-
-### Development Environment (with HMR & Volume Mounts)
-
-To start the app in development mode inside Docker, run:
-
-```bash
-docker compose -f docker-compose.dev.yml up --build
-```
-
-- **Port**: Access the app at [http://localhost:5173/Verdora-frontend/](http://localhost:5173/Verdora-frontend/).
-- **Hot-Reloading**: Changes made to files in your local project workspace are mounted directly into the container and update in real-time.
-
-### Production Environment (with Nginx)
-
-To build and run the optimized production container locally:
-
-```bash
-docker compose up --build
-```
-
-- **Port**: Access the app at [http://localhost/Verdora-frontend/](http://localhost/Verdora-frontend/) or [http://localhost/](http://localhost/).
-- **Server**: Served using an optimized Nginx Alpine instance configured to support React SPA fallback routing (`try_files`) and Gzip compression.
-
----
-
 ## Deployment
 
 ### GitHub Pages (Static Hosting)
