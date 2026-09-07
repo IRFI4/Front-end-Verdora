@@ -26,8 +26,8 @@ const Cart = () => {
   const removeItemMutation = useRemoveItemFromCart();
 
   const items = cart?.items || [];
-  const totalPrice = cart?.totalPrice || 0;
-  const shippingCost = cart?.shippingCost || 0;
+  const totalPrice = cart?.totalPrice ?? 0;
+  const shippingCost = cart?.shippingCost ?? 0;
   const itemsCount = items.length;
 
   const {
@@ -70,11 +70,6 @@ const Cart = () => {
 
   const handleProceedToCheckout = handleSubmit(() => {
     if (!canSubmit()) return;
-
-    setValue('totalItems', totalItems);
-    setValue('shippingCost', shippingCost);
-    setValue('totalCost', totalPrice);
-
     navigate('/checkout');
   });
 

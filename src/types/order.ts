@@ -35,7 +35,7 @@ export type Order = {
   invoiceUrl?: string | null;
 };
 
-export interface UpdateOrderPayload {
+export type UpdateOrderPayload = {
   orderId: number;
   status: OrderStatus;
-}
+};

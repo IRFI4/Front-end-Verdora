@@ -18,6 +18,8 @@ import AdminDashboard from '@pages/admin/Dashboard';
 import ProtectedRoute from '@/guards/ProtectedRoute';
 import OrderManagement from '@pages/admin/OrderManagement';
 import ProductManagement from '@pages/admin/ProductManagement';
+import Checkout from '@pages/Checkout';
+import OrderResult from '@pages/OrderResult';
 
 const queryClient = new QueryClient();
 createRoot(document.getElementById('root')!).render(
@@ -59,14 +61,9 @@ createRoot(document.getElementById('root')!).render(
                 </ProtectedRoute>
               }
             />
-            <Route
-              path="/cart"
-              element={
-                <ProtectedRoute requireAuth={true}>
-                  <Cart />
-                </ProtectedRoute>
-              }
-            />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/order-result" element={<OrderResult />} />
             <Route
               path="/orders"
               element={
@@ -83,7 +80,6 @@ createRoot(document.getElementById('root')!).render(
                 </ProtectedRoute>
               }
             />
-
             <Route path="/admin">
               <Route
                 index

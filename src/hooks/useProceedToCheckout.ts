@@ -10,10 +10,6 @@ export const useProceedToCheckout = () => {
     resolver: zodResolver(proceedToCheckoutSchema),
     mode: 'onChange',
     defaultValues: {
-      totalItems: 0,
-      totalItemsPrice: 0,
-      shippingCost: 0,
-      totalCost: 0,
       agreeToTerms: false,
     },
   });
