@@ -24,5 +24,6 @@ export const ADMIN_MENU: SidebarSection[] = [
 ];
 
 export const USER_MENU: MenuSection = [
+  { icon: ShoppingBag, label: 'My Orders', path: '/orders' },
   { icon: Settings, label: 'Settings', path: '/settings' },
 ];
