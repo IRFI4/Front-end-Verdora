@@ -4,6 +4,7 @@ import { Badge } from '@components/ui/badge';
 import { Button } from '@components/ui/button';
 import { Package, FolderOpen, DollarSign, Tag, Pencil } from 'lucide-react';
 import type { Product } from '@/types/product';
+import { formatCurrency } from '@/utils/order.utils';
 
 type ProductDetailsDialogProps = {
   product: Product | null;
@@ -18,11 +19,6 @@ export const ProductDetailsDialog: React.FC<ProductDetailsDialogProps> = ({
   onClose,
   onEdit,
 }) => {
-  const formatCurrency = (val?: number) => {
-    if (val === undefined || val === null) return '—';
-    return `$${val.toFixed(2)}`;
-  };
-
   return (
     <DialogComponent
       open={!!product}

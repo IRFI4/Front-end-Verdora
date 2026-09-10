@@ -14,7 +14,8 @@ import {
   TableHeader,
   TableRow,
 } from '@components/ui/table';
-import { Badge } from '@components/ui/badge';
+import OrderStatusBadge from '@components/common/Badge/OrderStatusBadge';
+import NoticeAlert from '@components/common/NoticeAlert';
 import { KPI_METRICS, RECENT_ORDERS } from '@fixtures/dashboard.fixture';
 import AdminSectionHeader from '@components/common/section/AdminSectionHeader';
 import { useGetAllUsers } from '@api/user/user.hooks';
@@ -97,9 +98,10 @@ const AdminDashboard = () => {
       </div>
 
       {userError && (
-        <div className="p-4 rounded-md bg-destructive/10 text-destructive text-sm font-medium border border-destructive/20">
-          An error occurred while loading the data. Please try again later.
-        </div>
+        <NoticeAlert
+          variant="error"
+          message="An error occurred while loading the data. Please try again later."
+        />
       )}
 
       {userPending && !userError && (
@@ -184,17 +186,7 @@ const AdminDashboard = () => {
                     {order.date}
                   </TableCell>
                   <TableCell>
-                    <Badge
-                      variant={
-                        order.status === 'Completed'
-                          ? 'default'
-                          : order.status === 'Processing'
-                            ? 'secondary'
-                            : 'outline'
-                      }
-                    >
-                      {order.status}
-                    </Badge>
+                    <OrderStatusBadge status={order.status} />
                   </TableCell>
                   <TableCell className="text-right font-medium">
                     {order.amount}

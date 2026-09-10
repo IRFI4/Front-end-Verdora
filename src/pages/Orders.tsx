@@ -9,15 +9,9 @@ import { PaginationComponent } from '@components/common/pagination/Pagination';
 import { EmptySection } from '@components/common/section/EmptySection';
 import ErrorSection from '@components/common/section/ErrorSection';
 import AlertComponent from '@components/common/dialog/AlertComponent';
+import NoticeAlert from '@components/common/NoticeAlert';
 import { sortOrdersNewestFirst } from '@/utils/order.utils';
-import {
-  ShoppingBag,
-  Package,
-  RefreshCw,
-  CheckCircle2,
-  AlertCircle,
-  X,
-} from 'lucide-react';
+import { ShoppingBag, Package, RefreshCw } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const ORDERS_PER_PAGE = 12;
@@ -126,41 +120,19 @@ const Orders = () => {
         </div>
 
         {successNotice && (
-          <div
-            role="status"
-            className="flex items-center justify-between rounded-lg bg-emerald-50 border border-emerald-200 px-4 py-3 text-sm text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800 animate-in fade-in duration-200"
-          >
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="size-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
-              <span className="font-medium">{successNotice}</span>
-            </div>
-            <button
-              onClick={() => setSuccessNotice(null)}
-              className="text-emerald-700 hover:text-emerald-900 dark:text-emerald-400 cursor-pointer p-1"
-              aria-label="Dismiss success notice"
-            >
-              <X className="size-4" />
-            </button>
-          </div>
+          <NoticeAlert
+            variant="success"
+            message={successNotice}
+            onDismiss={() => setSuccessNotice(null)}
+          />
         )}
 
         {cancelErrorNotice && (
-          <div
-            role="alert"
-            className="flex items-center justify-between rounded-lg bg-rose-50 border border-rose-200 px-4 py-3 text-sm text-rose-800 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800 animate-in fade-in duration-200"
-          >
-            <div className="flex items-center gap-2">
-              <AlertCircle className="size-4 shrink-0 text-rose-600 dark:text-rose-400" />
-              <span className="font-medium">{cancelErrorNotice}</span>
-            </div>
-            <button
-              onClick={() => setCancelErrorNotice(null)}
-              className="text-rose-700 hover:text-rose-900 dark:text-rose-400 cursor-pointer p-1"
-              aria-label="Dismiss error notice"
-            >
-              <X className="size-4" />
-            </button>
-          </div>
+          <NoticeAlert
+            variant="error"
+            message={cancelErrorNotice}
+            onDismiss={() => setCancelErrorNotice(null)}
+          />
         )}
 
         {isLoading ? (
@@ -266,7 +238,6 @@ const Orders = () => {
             }
           }}
           actionText="Confirm Cancel Order"
-          buttonText={<span className="hidden" />}
           loadingText="Cancelling..."
           isDeleting={cancelMutation.isPending}
           errorText={cancelMutation.error?.response?.data?.message}

@@ -5,6 +5,7 @@ import { Button } from '@components/ui/button';
 import { Eye, Pencil, Trash2, Package } from 'lucide-react';
 import type { Product } from '@/types/product';
 import { Skeleton } from '@components/ui/skeleton';
+import { formatCurrency } from '@/utils/order.utils';
 
 type ProductRowProps = {
   product: Product;
@@ -27,10 +28,6 @@ export const ProductRow = ({
     typeof product.discountPrice === 'number' &&
     product.discountPrice > 0 &&
     product.discountPrice < product.price;
-
-  const formatCurrency = (val: number) => {
-    return `$${val.toFixed(2)}`;
-  };
 
   return (
     <TableRow className="hover:bg-muted/30 transition-colors">

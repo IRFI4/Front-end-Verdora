@@ -4,7 +4,7 @@ import type { Order } from '@/types/order';
 import DialogComponent from '@components/common/dialog/DialogComponent';
 import OrderStatusBadge from '@/components/common/Badge/OrderStatusBadge';
 import { Button } from '@components/ui/button';
-import { ExternalLink, Download } from 'lucide-react';
+import { ExternalLink, Download, Pencil } from 'lucide-react';
 import {
   Table,
   TableBody,
@@ -25,6 +25,9 @@ type OrderDetailsDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onCancelClick?: (order: Order) => void;
+  onEditStatus?: (order: Order) => void;
+  showInvoice?: boolean;
+  showFullPageLink?: boolean;
   isCancelling?: boolean;
 };
 
@@ -33,6 +36,9 @@ export const OrderDetailsDialog: React.FC<OrderDetailsDialogProps> = ({
   open,
   onOpenChange,
   onCancelClick,
+  onEditStatus,
+  showInvoice = true,
+  showFullPageLink = true,
   isCancelling = false,
 }) => {
   if (!order) return null;
@@ -64,27 +70,45 @@ export const OrderDetailsDialog: React.FC<OrderDetailsDialogProps> = ({
           </div>
 
           <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => printOrderInvoice(order)}
-              className="h-7 px-2 text-xs gap-1 cursor-pointer"
-              title="Download or print invoice"
-            >
-              <Download className="size-3" />
-              <span>Invoice</span>
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              asChild
-              className="h-7 px-2 text-xs gap-1"
-            >
-              <Link to={`/orders/${order.orderId}`}>
-                <span>Full Page</span>
-                <ExternalLink className="size-3" />
-              </Link>
-            </Button>
+            {onEditStatus && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onEditStatus(order)}
+                className="h-7 px-2 text-xs gap-1 cursor-pointer"
+                title="Change order status"
+              >
+                <Pencil className="size-3 mr-1" />
+                <span>Change Status</span>
+              </Button>
+            )}
+
+            {showInvoice && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => printOrderInvoice(order)}
+                className="h-7 px-2 text-xs gap-1 cursor-pointer"
+                title="Download or print invoice"
+              >
+                <Download className="size-3" />
+                <span>Invoice</span>
+              </Button>
+            )}
+
+            {showFullPageLink && (
+              <Button
+                variant="ghost"
+                size="sm"
+                asChild
+                className="h-7 px-2 text-xs gap-1"
+              >
+                <Link to={`/orders/${order.orderId}`}>
+                  <span>Full Page</span>
+                  <ExternalLink className="size-3" />
+                </Link>
+              </Button>
+            )}
           </div>
         </div>
 

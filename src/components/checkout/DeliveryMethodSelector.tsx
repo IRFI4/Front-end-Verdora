@@ -1,5 +1,6 @@
 import { Truck, Store } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { formatOrderPrice } from '@/utils/order.utils';
 
 type Props = {
   selectedMethod: 'delivery' | 'pickup';
@@ -40,7 +41,7 @@ const DeliveryMethodSelector = ({
               Courier Delivery
             </span>
             <span className="text-xs font-semibold text-emerald-700">
-              ${baseShippingCost.toFixed(2)}
+              {formatOrderPrice(baseShippingCost)}
             </span>
           </div>
           <p className="text-xs text-gray-500 mt-1">

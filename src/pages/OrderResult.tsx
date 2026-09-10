@@ -8,7 +8,8 @@ import {
   CardTitle,
   CardFooter,
 } from '@components/ui/card';
-import { Badge } from '@components/ui/badge';
+import OrderStatusBadge from '@components/common/Badge/OrderStatusBadge';
+import { formatOrderPrice } from '@/utils/order.utils';
 import { Skeleton } from '@components/ui/skeleton';
 import ErrorSection from '@components/common/section/ErrorSection';
 import { useOrderById } from '@api/order/order.hooks';
@@ -96,12 +97,7 @@ const OrderResult = () => {
                   <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
                     Status
                   </p>
-                  <Badge
-                    variant="default"
-                    className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-3 py-1"
-                  >
-                    {order?.status || 'Confirmed'}
-                  </Badge>
+                  <OrderStatusBadge status={order?.status || 'CONFIRMED'} />
                 </div>
               </div>
 
@@ -135,19 +131,19 @@ const OrderResult = () => {
                             {item.productName}
                           </p>
                           <p className="text-xs text-gray-500">
-                            Qty: {item.quantity} × $
-                            {item.priceAtPurchase.toFixed(2)}
+                            Qty: {item.quantity} ×{' '}
+                            {formatOrderPrice(item.priceAtPurchase)}
                           </p>
                         </div>
                         <span className="font-semibold text-gray-900">
-                          ${item.subtotal.toFixed(2)}
+                          {formatOrderPrice(item.subtotal)}
                         </span>
                       </div>
                     ))}
                     <div className="p-3.5 flex justify-between items-center font-bold text-gray-900 bg-gray-50/50">
                       <span>Total Paid</span>
                       <span className="text-emerald-700">
-                        ${order.totalPrice.toFixed(2)}
+                        {formatOrderPrice(order.totalPrice)}
                       </span>
                     </div>
                   </div>

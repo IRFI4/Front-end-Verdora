@@ -3,7 +3,7 @@ import AdminLayout from '@components/layout/pageLayout/AdminLayout';
 import AdminSectionHeader from '@components/common/section/AdminSectionHeader';
 import { Button } from '@components/ui/button';
 import OrderStatusBadge from '@components/common/Badge/OrderStatusBadge';
-import { formatOrderDate } from '@/utils/order.utils';
+import { formatOrderDate, formatOrderPrice } from '@/utils/order.utils';
 import {
   Card,
   CardContent,
@@ -20,7 +20,9 @@ import {
   TableRow,
 } from '@components/ui/table';
 import DialogComponent from '@components/common/dialog/DialogComponent';
+import OrderDetailsDialog from '@components/common/dialog/OrderDetailsDialog';
 import AlertComponent from '@components/common/dialog/AlertComponent';
+import NoticeAlert from '@components/common/NoticeAlert';
 import {
   useAllOrders,
   useUpdateOrder,
@@ -36,7 +38,6 @@ import {
   Eye,
   Pencil,
   RefreshCw,
-  AlertCircle,
   Loader2,
 } from 'lucide-react';
 import {
@@ -119,18 +120,8 @@ const OrderManagement = () => {
   return (
     <AdminLayout>
       <AdminSectionHeader
-        title={
-          <div className="flex items-center gap-3">
-            <span className="font-heading font-semibold text-text-h">
-              Order Management
-            </span>
-            {apiOrders && apiOrders.length > 0 && (
-              <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary">
-                {apiOrders.length} total
-              </span>
-            )}
-          </div>
-        }
+        title="Order Management"
+        count={apiOrders?.length}
         description="Monitor, process, and update customer orders across your catalog."
       >
         <Button
@@ -286,7 +277,7 @@ const OrderManagement = () => {
                         {order.items.reduce((acc, i) => acc + i.quantity, 0)}
                       </TableCell>
                       <TableCell className="text-right font-semibold text-foreground">
-                        ${order.totalPrice.toFixed(2)}
+                        {formatOrderPrice(order.totalPrice)}
                       </TableCell>
                       <TableCell className="text-center">
                         <OrderStatusBadge status={order.status} />
@@ -340,82 +331,18 @@ const OrderManagement = () => {
         )}
       </div>
 
-      <DialogComponent
+      <OrderDetailsDialog
+        order={selectedOrderDetails}
         open={!!selectedOrderDetails}
         onOpenChange={open => {
           if (!open) setSelectedOrderDetails(null);
         }}
-        headerTitle={`Order #${selectedOrderDetails?.orderId} Details`}
-        headerDescription={`Placed on ${selectedOrderDetails ? formatDate(selectedOrderDetails.createdAt) : ''}`}
-        contentClassName="sm:max-w-xl"
-        cancelText="Close"
-      >
-        {selectedOrderDetails && (
-          <div className="space-y-4 py-2">
-            <div className="flex items-center justify-between p-3 rounded-lg bg-muted/40 border border-border">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium">Status:</span>
-                <OrderStatusBadge status={selectedOrderDetails.status} />
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  updateMutation.reset();
-                  setEditingOrder(selectedOrderDetails);
-                  setSelectedStatus(selectedOrderDetails.status);
-                }}
-                className="h-8 text-xs cursor-pointer"
-              >
-                <Pencil className="size-3 mr-1" />
-                Change Status
-              </Button>
-            </div>
-
-            <div className="rounded-md border border-border overflow-hidden">
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-muted/30">
-                    <TableHead className="text-xs">Product</TableHead>
-                    <TableHead className="text-center text-xs">Qty</TableHead>
-                    <TableHead className="text-right text-xs">
-                      Unit Price
-                    </TableHead>
-                    <TableHead className="text-right text-xs">
-                      Subtotal
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {selectedOrderDetails.items.map(item => (
-                    <TableRow key={item.orderItemId}>
-                      <TableCell className="text-sm font-medium">
-                        {item.productName}
-                      </TableCell>
-                      <TableCell className="text-center text-sm">
-                        {item.quantity}
-                      </TableCell>
-                      <TableCell className="text-right text-sm">
-                        ${item.priceAtPurchase.toFixed(2)}
-                      </TableCell>
-                      <TableCell className="text-right text-sm font-medium">
-                        ${item.subtotal.toFixed(2)}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-
-            <div className="flex justify-between items-center pt-2 border-t border-border">
-              <span className="font-semibold text-base">Total Amount:</span>
-              <span className="font-bold text-lg text-primary">
-                ${selectedOrderDetails.totalPrice.toFixed(2)}
-              </span>
-            </div>
-          </div>
-        )}
-      </DialogComponent>
+        onEditStatus={order => {
+          updateMutation.reset();
+          setEditingOrder(order);
+          setSelectedStatus(order.status);
+        }}
+      />
 
       <DialogComponent
         open={!!editingOrder}
@@ -447,17 +374,14 @@ const OrderManagement = () => {
           )}
 
           {updateMutation.isError && (
-            <div
-              role="alert"
-              className="flex items-center gap-2 rounded-md bg-destructive/15 p-3 text-sm font-medium text-destructive"
-            >
-              <AlertCircle className="size-4 shrink-0" />
-              <span>
-                {updateMutation.error?.response?.data?.message ||
-                  updateMutation.error?.message ||
-                  'Failed to update order status. Please try again.'}
-              </span>
-            </div>
+            <NoticeAlert
+              variant="error"
+              message={
+                updateMutation.error?.response?.data?.message ||
+                updateMutation.error?.message ||
+                'Failed to update order status. Please try again.'
+              }
+            />
           )}
 
           <div className="space-y-2">

@@ -37,19 +37,11 @@ const Login = () => {
     }
   };
 
-  const handleGoogleLogin = () => {
-    const returnTo = encodeURIComponent(
-      window.location.origin + import.meta.env.BASE_URL
-    );
-    window.location.href = `${import.meta.env.VITE_API_URL}/auth/google?return_to=${returnTo}`;
-  };
-
   return (
     <AuthForm
       footerText="Don’t have an account?"
       footerLink="/register"
       footerLinkText="Sign up"
-      onGoogleAuth={handleGoogleLogin}
     >
       <form
         className="flex flex-col justify-center gap-4 w-full"

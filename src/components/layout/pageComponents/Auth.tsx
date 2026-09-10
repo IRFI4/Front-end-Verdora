@@ -22,6 +22,13 @@ type AuthFormProps = {
   continueWithGoogle?: boolean;
 };
 
+const defaultGoogleAuth = () => {
+  const returnTo = encodeURIComponent(
+    window.location.origin + import.meta.env.BASE_URL
+  );
+  window.location.href = `${import.meta.env.VITE_API_URL}/auth/google?return_to=${returnTo}`;
+};
+
 const AuthForm = ({
   title,
   subtitle,
@@ -29,7 +36,7 @@ const AuthForm = ({
   footerText,
   footerLink,
   footerLinkText,
-  onGoogleAuth,
+  onGoogleAuth = defaultGoogleAuth,
   continueWithGoogle = true,
 }: AuthFormProps) => {
   return (

@@ -37,7 +37,9 @@ const AlertComponent = ({
 }: Props) => {
   return (
     <AlertDialog open={isAlertDialogOpen} onOpenChange={onOpenChange}>
-      <AlertDialogTrigger asChild>{buttonText}</AlertDialogTrigger>
+      {buttonText && (
+        <AlertDialogTrigger asChild>{buttonText}</AlertDialogTrigger>
+      )}
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>

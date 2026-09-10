@@ -20,6 +20,7 @@ import OrderManagement from '@pages/admin/OrderManagement';
 import ProductManagement from '@pages/admin/ProductManagement';
 import Checkout from '@pages/Checkout';
 import OrderResult from '@pages/OrderResult';
+import Catalog from '@pages/Catalog';
 
 const queryClient = new QueryClient();
 createRoot(document.getElementById('root')!).render(
@@ -29,6 +30,7 @@ createRoot(document.getElementById('root')!).render(
         <BrowserRouter basename={import.meta.env.BASE_URL}>
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/catalog" element={<Catalog />} />
             <Route
               path="/login"
               element={

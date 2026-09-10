@@ -1,5 +1,6 @@
 import { Button } from '@components/ui/button';
 import { Trash2 } from 'lucide-react';
+import { formatOrderPrice } from '@/utils/order.utils';
 
 type Props = {
   productName: string;
@@ -58,12 +59,12 @@ const CartItem = ({
 
       <div className="flex flex-col items-center justify-center text-center min-w-[100px]">
         <p className="font-bold text-lg text-[#1A1A1A]">
-          ${currentPrice.toFixed(2)}
+          {formatOrderPrice(currentPrice)}
         </p>
 
         {discountPrice !== undefined && (
           <p className="text-sm text-gray-400 line-through mt-0.5">
-            ${price.toFixed(2)}
+            {formatOrderPrice(price)}
           </p>
         )}
       </div>
@@ -84,7 +85,7 @@ const CartItem = ({
 
       <div className="text-right pr-8">
         <p className="font-bold text-lg text-[#1A1A1A]">
-          ${totalPrice.toFixed(2)}
+          {formatOrderPrice(totalPrice)}
         </p>
       </div>
 
