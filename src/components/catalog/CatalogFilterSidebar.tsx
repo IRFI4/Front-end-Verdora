@@ -18,22 +18,21 @@ const SAMPLE_CATEGORIES = [
 
 const CatalogFilterSidebar = ({ onResetAll }: Props) => {
   return (
-    <aside className="w-full lg:w-72 shrink-0 bg-[#fcfdfb] border border-border rounded-xl shadow-xs lg:sticky lg:top-24 flex flex-col max-h-[85vh] lg:max-h-[calc(100vh-7rem)] overflow-hidden">
-      <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-[#fcfdfb] shrink-0">
-        <span className="font-heading font-semibold text-text-h text-base">
-          Filters
-        </span>
-        <button
-          type="button"
-          onClick={onResetAll}
-          className="text-xs text-text hover:text-primary flex items-center gap-1 underline underline-offset-3 cursor-pointer transition-colors"
-        >
-          <RotateCcw className="size-3" />
-          <span>Reset all</span>
-        </button>
-      </div>
-
-      <ScrollArea className="flex-1 min-h-0 w-full">
+    <aside className="w-full lg:w-72 shrink-0 lg:sticky lg:top-24">
+      <ScrollArea className="w-full rounded-xl border border-border bg-[#fcfdfb] shadow-xs max-h-[calc(100dvh-7rem)]">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-[#fcfdfb] sticky top-0 z-10">
+          <span className="font-heading font-semibold text-text-h text-base">
+            Filters
+          </span>
+          <button
+            type="button"
+            onClick={onResetAll}
+            className="text-xs text-text hover:text-primary flex items-center gap-1 underline underline-offset-3 cursor-pointer transition-colors"
+          >
+            <RotateCcw className="size-3" />
+            <span>Reset all</span>
+          </button>
+        </div>
         <div className="p-5 border-b border-border space-y-3.5">
           <div className="text-[11px] font-semibold tracking-wider uppercase text-text">
             Price range, ₴
