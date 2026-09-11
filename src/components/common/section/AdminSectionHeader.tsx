@@ -40,4 +40,5 @@ const AdminSectionHeader = ({
   );
 };
 
+export { AdminSectionHeader, AdminSectionHeader as SectionHeader };
 export default AdminSectionHeader;
