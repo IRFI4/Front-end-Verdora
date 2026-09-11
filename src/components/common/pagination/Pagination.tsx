@@ -106,7 +106,7 @@ export const PaginationComponent = ({
   };
 
   return (
-    <Pagination className="py-4">
+    <Pagination>
       <PaginationContent>
         <PaginationItem>
           <PaginationPrevious
