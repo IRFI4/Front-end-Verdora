@@ -18,6 +18,7 @@ type Props = {
   onResetAll?: () => void;
   searchQuery?: string;
   hasActiveFilters?: boolean;
+  onProductClick?: (productId: number) => void;
 };
 
 const CatalogProductList = ({
@@ -33,6 +34,7 @@ const CatalogProductList = ({
   onResetAll,
   searchQuery,
   hasActiveFilters = false,
+  onProductClick,
 }: Props) => {
   const isGrid = viewMode === 'grid';
 
@@ -168,6 +170,7 @@ const CatalogProductList = ({
           onToggleFavorite={onToggleFavorite}
           onAddToCart={onAddToCart}
           onAuthRequired={onAuthRequired}
+          onProductClick={onProductClick}
         />
       ))}
     </div>

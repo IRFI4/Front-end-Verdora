@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card } from '@components/ui/card';
 import { Skeleton } from '@components/ui/skeleton';
 import { Heart, Flower2, Check } from 'lucide-react';
@@ -17,6 +18,7 @@ type Props = {
   onAddToCart?: (id: number) => void;
   onAuthRequired?: () => void;
   isAuthenticated?: boolean;
+  onProductClick?: (productId: number) => void;
 };
 
 export const CatalogProductCard = ({
@@ -28,7 +30,9 @@ export const CatalogProductCard = ({
   onAddToCart,
   onAuthRequired,
   isAuthenticated,
+  onProductClick,
 }: Props) => {
+  const navigate = useNavigate();
   const { user } = useAppSelector(state => state.auth);
   const isLoggedIn =
     isAuthenticated !== undefined ? isAuthenticated : Boolean(user);
@@ -46,7 +50,37 @@ export const CatalogProductCard = ({
   const originalPrice = hasDiscount ? product.price : undefined;
   const productId = product.productId;
 
-  const handleToggleFavorite = () => {
+  const handleCardClick = (e?: React.MouseEvent) => {
+    if (e && (e.button === 1 || e.ctrlKey || e.metaKey)) {
+      window.open(`/products/${productId}`, '_blank');
+      return;
+    }
+    if (onProductClick) {
+      onProductClick(productId);
+    } else {
+      navigate(`/products/${productId}`);
+    }
+  };
+
+  const handleAuxClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.button === 1) {
+      e.preventDefault();
+      handleCardClick(e);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      const target = e.target as HTMLElement;
+      if (!target.closest('button')) {
+        e.preventDefault();
+        handleCardClick();
+      }
+    }
+  };
+
+  const handleToggleFavorite = (e: React.MouseEvent) => {
+    e.stopPropagation();
     if (!isLoggedIn) {
       onAuthRequired?.();
       return;
@@ -55,7 +89,8 @@ export const CatalogProductCard = ({
     onToggleFavorite?.(productId);
   };
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.stopPropagation();
     onAddToCart?.(productId);
     setAdded(true);
     setTimeout(() => setAdded(false), 1500);
@@ -63,7 +98,13 @@ export const CatalogProductCard = ({
 
   return (
     <Card
-      className={`border border-border bg-[#fcfdfb] rounded-[22px] overflow-hidden p-4 shadow-xs hover:shadow-md transition-all duration-200 ${
+      role="button"
+      tabIndex={0}
+      onClick={handleCardClick}
+      onAuxClick={handleAuxClick}
+      onKeyDown={handleKeyDown}
+      aria-label={`View details for ${product.name}`}
+      className={`border border-border bg-[#fcfdfb] rounded-[22px] overflow-hidden p-4 shadow-xs hover:shadow-md transition-all duration-200 cursor-pointer group focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${
         isGrid
           ? 'flex flex-col gap-3.5'
           : 'flex flex-col sm:flex-row items-center gap-5'
@@ -80,7 +121,7 @@ export const CatalogProductCard = ({
               {categoryName}
             </span>
           )}
-          <h3 className="font-heading font-medium text-[16px] leading-[1.3] text-[#0C0C0C] tracking-tight line-clamp-2">
+          <h3 className="font-heading font-medium text-[16px] leading-[1.3] text-[#0C0C0C] tracking-tight line-clamp-2 group-hover:text-primary transition-colors">
             {product.name}
           </h3>
           {!isGrid && product.description && (
