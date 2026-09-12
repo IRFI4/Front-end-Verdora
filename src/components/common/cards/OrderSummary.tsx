@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { Skeleton } from '@components/ui/skeleton';
 import { Checkbox } from '@components/ui/checkbox';
 import { Label } from '@components/ui/label';
+import { formatOrderPrice } from '@/utils/order.utils';
 
 type Props = {
   totalItems?: number;
@@ -94,7 +95,7 @@ const OrderSummary = ({
               Subtotal {totalItems !== undefined ? `(${totalItems} items)` : ''}
             </span>
             <span className="font-medium text-gray-900">
-              ${displaySubtotal.toFixed(2)}
+              {formatOrderPrice(displaySubtotal)}
             </span>
           </div>
         )}
@@ -105,7 +106,7 @@ const OrderSummary = ({
             shippingText
           ) : (
             <span className="font-medium text-gray-900">
-              ${(shippingCost ?? 0).toFixed(2)}
+              {formatOrderPrice(shippingCost ?? 0)}
             </span>
           )}
         </div>
@@ -116,7 +117,7 @@ const OrderSummary = ({
       <div className="flex items-center justify-between font-bold text-gray-900">
         <span className="text-base">Total</span>
         <span className="text-xl text-emerald-700">
-          ${(totalCost ?? 0).toFixed(2)}
+          {formatOrderPrice(totalCost ?? 0)}
         </span>
       </div>
 

@@ -153,18 +153,8 @@ const ProductManagement = () => {
   return (
     <AdminLayout>
       <AdminSectionHeader
-        title={
-          <div className="flex items-center gap-3">
-            <span className="font-heading font-semibold text-text-h">
-              Product Management
-            </span>
-            {totalElements > 0 && (
-              <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary">
-                {totalElements} total
-              </span>
-            )}
-          </div>
-        }
+        title="Product Management"
+        count={totalElements}
         description="Monitor, search, filter, and manage products across your store catalog."
       >
         <div className="flex flex-col sm:flex-row gap-2.5 w-full sm:w-auto">

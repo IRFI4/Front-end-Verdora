@@ -11,6 +11,7 @@ import CartItemSkeleton from '@components/common/cards/CartItemSkeleton';
 import CartHeader from '@components/layout/pageComponents/CartHeader';
 import { EmptySection } from '@components/common/section/EmptySection';
 import ErrorSection from '@components/common/section/ErrorSection';
+import NoticeAlert from '@components/common/NoticeAlert';
 import {
   useGetCart,
   useRemoveItemFromCart,
@@ -107,8 +108,12 @@ const Cart = () => {
         <EmptySection
           title="Cart is empty"
           description="You haven't added any products yet. Browse our collection and find something you love."
-          className="flex-1 p-4"
-          icon={<CartIcon className="size-4" />}
+          className="rounded-xl border border-dashed border-border bg-card p-12 shadow-xs my-6"
+          icon={
+            <div className="flex items-center justify-center rounded-full bg-primary/10 p-4">
+              <CartIcon className="size-8 text-primary" />
+            </div>
+          }
           action={
             <Button variant="default" asChild>
               <Link to="/catalog">Continue Shopping</Link>
@@ -127,9 +132,7 @@ const Cart = () => {
     <LayoutPage>
       <CartHeader itemsCount={itemsCount} />
       {mutationError && (
-        <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-800 text-sm [font-family:var(--font-sans)]">
-          {mutationError}
-        </div>
+        <NoticeAlert variant="error" message={mutationError} className="mb-6" />
       )}
 
       <div className="flex flex-col lg:flex-row items-start gap-8 mt-8">

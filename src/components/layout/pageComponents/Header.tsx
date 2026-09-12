@@ -1,4 +1,5 @@
-import { Link } from 'react-router';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router';
 import Logo from '@components/common/Logo';
 import { Button } from '@components/ui/button';
 import { useAppDispatch, useAppSelector } from '@api/hooks';
@@ -10,15 +11,19 @@ import MenuIcon from '@assets/icons/menu.svg?react';
 import Navlink from '@components/common/Navlink';
 import { useQueryClient } from '@tanstack/react-query';
 import { useGetCart } from '@api/cart/cart.hooks';
+import LoginPromptDialog from '@components/common/dialog/LoginPromptDialog';
 
 type HeaderProps = {
   onOpenMenu: () => void;
 };
 
 const Header = ({ onOpenMenu }: HeaderProps) => {
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
   const { user, hydrating } = useAppSelector(state => state.auth);
+  const [isLoginPromptOpen, setIsLoginPromptOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const { data: cart } = useGetCart({ enabled: Boolean(user) });
   const items = cart?.items || [];
@@ -27,6 +32,20 @@ const Header = ({ onOpenMenu }: HeaderProps) => {
   const handleLogout = () => {
     dispatch(logout());
     queryClient.clear();
+  };
+
+  const handleFavouriteClick = (e: React.MouseEvent) => {
+    if (!user) {
+      e.preventDefault();
+      setIsLoginPromptOpen(true);
+    }
+  };
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      navigate(`/catalog?search=${encodeURIComponent(searchTerm.trim())}`);
+    }
   };
 
   return (
@@ -43,22 +62,28 @@ const Header = ({ onOpenMenu }: HeaderProps) => {
           </nav>
 
           <div className="flex items-center gap-4">
-            <div className="hidden md:flex items-center gap-3 rounded-full border border-zinc-300 bg-zinc-50 px-4 py-2 w-56 h-9">
+            <form
+              onSubmit={handleSearchSubmit}
+              className="hidden md:flex items-center gap-3 rounded-full border border-zinc-300 bg-zinc-50 px-4 py-2 w-56 h-9 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all"
+            >
               <input
                 type="text"
+                value={searchTerm}
+                onChange={e => setSearchTerm(e.target.value)}
                 placeholder="Search products..."
                 className="flex-1 bg-transparent text-[14px] text-[#2C332D] placeholder:text-zinc-400 focus:outline-none"
               />
-            </div>
+            </form>
 
             <Link
               to="/favourites"
               className="relative flex size-8 items-center justify-center rounded-full hover:bg-zinc-100 transition-colors"
               aria-label="Favourite items"
+              onClick={handleFavouriteClick}
             >
               <FavouriteIcon className="size-8" />
               <span className="absolute -top-1 right-1 flex size-4 items-center justify-center rounded-full bg-[#E07A5F] text-[10px] font-bold text-white">
-                2
+                0
               </span>
             </Link>
 
@@ -103,6 +128,12 @@ const Header = ({ onOpenMenu }: HeaderProps) => {
           </div>
         </div>
       </div>
+
+      <LoginPromptDialog
+        open={isLoginPromptOpen}
+        onOpenChange={setIsLoginPromptOpen}
+        action="favorite"
+      />
     </header>
   );
 };

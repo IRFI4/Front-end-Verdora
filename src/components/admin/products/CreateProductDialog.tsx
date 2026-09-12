@@ -1,7 +1,5 @@
 import React, { useEffect } from 'react';
 import DialogComponent from '@components/common/dialog/DialogComponent';
-import TextField from '@components/common/forms/TextField';
-import { AlertCircle } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -9,6 +7,7 @@ import {
   type AdminProductFormData,
 } from '@/schemas/product.schema';
 import type { Category } from '@/types/category';
+import ProductFormFields from '@components/admin/products/ProductFormFields';
 
 type CreateProductDialogProps = {
   open: boolean;
@@ -84,110 +83,13 @@ export const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
       autoCloseOnSubmit={false}
       loading={isPending}
     >
-      <form className="space-y-4 py-1">
-        {errorMessage && (
-          <div
-            role="alert"
-            className="p-3 rounded-md bg-destructive/15 text-destructive text-sm font-medium flex items-center gap-2"
-          >
-            <AlertCircle className="size-4 shrink-0" />
-            <span>{errorMessage}</span>
-          </div>
-        )}
-
-        <TextField
-          type="text"
-          label="Product Name"
-          id="create-name"
-          placeholder="e.g. Premium Organic Fertilizer"
-          value={form.watch('name')}
-          onChange={val => form.setValue('name', val, { shouldValidate: true })}
-          error={form.formState.errors.name?.message}
+      <form onSubmit={form.handleSubmit(data => onSubmit(data))}>
+        <ProductFormFields
+          form={form}
+          categoriesData={categoriesData}
+          errorMessage={errorMessage}
+          idPrefix="create"
         />
-
-        <div className="space-y-1.5">
-          <label className="text-sm font-medium text-foreground">
-            Category
-          </label>
-          <select
-            value={form.watch('categoryId')}
-            onChange={e =>
-              form.setValue('categoryId', Number(e.target.value), {
-                shouldValidate: true,
-              })
-            }
-            className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-          >
-            <option value="" disabled>
-              Select category
-            </option>
-            {categoriesData?.map(cat => (
-              <option key={cat.categoryId} value={cat.categoryId}>
-                {cat.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="grid grid-cols-2 gap-3">
-          <TextField
-            type="number"
-            label="Price ($)"
-            id="create-price"
-            placeholder="29.99"
-            value={form.watch('price') || ''}
-            onChange={val =>
-              form.setValue('price', val, { shouldValidate: true })
-            }
-            error={form.formState.errors.price?.message}
-          />
-
-          <TextField
-            type="number"
-            label="Discount Price ($)"
-            id="create-discount"
-            placeholder="19.99 (Optional)"
-            value={form.watch('discountPrice') || ''}
-            onChange={val =>
-              form.setValue('discountPrice', val, { shouldValidate: true })
-            }
-            error={form.formState.errors.discountPrice?.message}
-          />
-        </div>
-
-        <TextField
-          type="text"
-          label="Image URL"
-          id="create-image"
-          placeholder="https://example.com/image.jpg"
-          value={form.watch('imageUrl')}
-          onChange={val =>
-            form.setValue('imageUrl', val, { shouldValidate: true })
-          }
-          error={form.formState.errors.imageUrl?.message}
-        />
-
-        <div className="space-y-1.5">
-          <label className="text-sm font-medium text-foreground">
-            Description
-          </label>
-          <textarea
-            rows={3}
-            placeholder="Detailed description of the product..."
-            value={form.watch('description')}
-            onChange={e =>
-              form.setValue('description', e.target.value, {
-                shouldValidate: true,
-              })
-            }
-            className="w-full rounded-md border border-input bg-background p-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-          />
-          {form.formState.errors.description && (
-            <p className="text-xs text-destructive">
-              {form.formState.errors.description.message}
-            </p>
-          )}
-        </div>
       </form>
     </DialogComponent>
   );

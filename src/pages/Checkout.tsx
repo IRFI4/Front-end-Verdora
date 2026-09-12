@@ -10,13 +10,15 @@ import ErrorSection from '@components/common/section/ErrorSection';
 import CartHeader from '@components/layout/pageComponents/CartHeader';
 import TextField from '@components/common/forms/TextField';
 import OrderSummary from '@components/common/cards/OrderSummary';
+import NoticeAlert from '@components/common/NoticeAlert';
+import { formatCurrency } from '@/utils/order.utils';
 import { useGetCart } from '@api/cart/cart.hooks';
 import { useCreateOrder } from '@api/order/order.hooks';
 import { useGetCurrentUser } from '@api/user/user.hooks';
 import { useCheckoutForm } from '@hooks/useCheckoutForm';
 import type { CheckoutFormData } from '@/schemas/checkout.schema';
 import { rateLimit } from '@/utils/rateLimit';
-import { Truck, User, Mail, Phone, AlertCircle, RotateCcw } from 'lucide-react';
+import { Truck, User, Mail, Phone, RotateCcw } from 'lucide-react';
 import DeliveryMethodSelector from '@components/checkout/DeliveryMethodSelector';
 import DeliveryAddressForm from '@components/checkout/DeliveryAddressForm';
 import PickupLocationSelector from '@components/checkout/PickupLocationSelector';
@@ -160,37 +162,34 @@ const Checkout = () => {
       />
 
       {serverErrorMsg && (
-        <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-900 text-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-start gap-3">
-            <AlertCircle className="size-5 text-red-600 shrink-0 mt-0.5" />
-            <div>
-              <p className="font-semibold text-red-950">
-                Order Placement Failed
-              </p>
-              <p className="text-xs text-red-800 mt-0.5">{serverErrorMsg}</p>
+        <NoticeAlert
+          variant="error"
+          title="Order Placement Failed"
+          message={serverErrorMsg}
+          className="mb-6"
+          action={
+            <div className="flex items-center gap-2">
+              <Button
+                variant="default"
+                size="sm"
+                className="bg-red-600 hover:bg-red-700 text-white text-xs font-semibold"
+                onClick={handlePlaceOrderClick}
+                disabled={createOrderMutation.isPending}
+              >
+                <RotateCcw className="size-3.5 mr-1.5" />
+                {createOrderMutation.isPending ? 'Retrying...' : 'Try Again'}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-red-300 text-red-700 hover:bg-red-100 text-xs"
+                onClick={() => createOrderMutation.reset()}
+              >
+                Dismiss
+              </Button>
             </div>
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <Button
-              variant="default"
-              size="sm"
-              className="bg-red-600 hover:bg-red-700 text-white text-xs font-semibold"
-              onClick={handlePlaceOrderClick}
-              disabled={createOrderMutation.isPending}
-            >
-              <RotateCcw className="size-3.5 mr-1.5" />
-              {createOrderMutation.isPending ? 'Retrying...' : 'Try Again'}
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="border-red-300 text-red-700 hover:bg-red-100 text-xs"
-              onClick={() => createOrderMutation.reset()}
-            >
-              Dismiss
-            </Button>
-          </div>
-        </div>
+          }
+        />
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
@@ -345,10 +344,9 @@ const Checkout = () => {
                     </p>
                   </div>
                   <span className="font-semibold text-gray-900 text-xs">
-                    $
-                    {(
+                    {formatCurrency(
                       (item.discountPrice ?? item.price) * item.quantity
-                    ).toFixed(2)}
+                    )}
                   </span>
                 </div>
               ))}

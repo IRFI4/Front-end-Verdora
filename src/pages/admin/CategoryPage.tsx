@@ -54,18 +54,8 @@ const AdminCategoriesPage = () => {
   return (
     <AdminLayout>
       <AdminSectionHeader
-        title={
-          <div className="flex items-center gap-3">
-            <span className="font-heading font-semibold text-text-h">
-              Categories
-            </span>
-            {items && items.length > 0 && (
-              <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary">
-                {items.length} total
-              </span>
-            )}
-          </div>
-        }
+        title="Categories"
+        count={items?.length}
         description="Manage how products are organized in your catalog."
       >
         <Button
