@@ -23,6 +23,10 @@ export type BreadcrumbsProps = {
   className?: string;
 };
 
+const SEGMENT_HREF_OVERRIDES: Record<string, string> = {
+  products: '/catalog',
+};
+
 const formatSegment = (segment: string): string => {
   return segment
     .split('-')
@@ -63,7 +67,8 @@ export const Breadcrumbs = ({ items, root, className }: BreadcrumbsProps) => {
         hasMatchingRootSegment && defaultRoot.href !== '/'
           ? defaultRoot.href
           : '';
-      const href = `${pathPrefix}/${subSegments.slice(0, index + 1).join('/')}`;
+      const rawHref = `${pathPrefix}/${subSegments.slice(0, index + 1).join('/')}`;
+      const href = SEGMENT_HREF_OVERRIDES[segment.toLowerCase()] ?? rawHref;
 
       generated.push({
         label: formatSegment(segment),
