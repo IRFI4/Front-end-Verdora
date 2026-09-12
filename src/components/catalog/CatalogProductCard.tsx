@@ -1,46 +1,64 @@
 import { useState } from 'react';
 import { Card } from '@components/ui/card';
-import { Heart } from 'lucide-react';
+import { Skeleton } from '@components/ui/skeleton';
+import { Heart, Flower2, Check } from 'lucide-react';
+import { useAppSelector } from '@api/hooks';
 import type { ViewMode } from './CatalogToolbar';
+import type { Product } from '@/types/product';
 
-export type CatalogProduct = {
-  id: number;
-  name: string;
-  category?: string;
-  price: number;
-  oldPrice?: number;
-  imageUrl?: string;
-  rating?: number;
-};
+export type CatalogProduct = Product;
 
 type Props = {
-  product: CatalogProduct;
+  product: Product;
+  categoryName?: string;
   viewMode?: ViewMode;
   isFavorite?: boolean;
   onToggleFavorite?: (id: number) => void;
   onAddToCart?: (id: number) => void;
+  onAuthRequired?: () => void;
+  isAuthenticated?: boolean;
 };
 
 export const CatalogProductCard = ({
   product,
+  categoryName,
   viewMode = 'grid',
   isFavorite = false,
   onToggleFavorite,
   onAddToCart,
+  onAuthRequired,
+  isAuthenticated,
 }: Props) => {
+  const { user } = useAppSelector(state => state.auth);
+  const isLoggedIn =
+    isAuthenticated !== undefined ? isAuthenticated : Boolean(user);
+
   const [internalFav, setInternalFav] = useState(isFavorite);
+  const [imageError, setImageError] = useState(false);
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const [added, setAdded] = useState(false);
   const isGrid = viewMode === 'grid';
+
   const hasDiscount = Boolean(
-    product.oldPrice && product.oldPrice > product.price
+    product.discountPrice && product.discountPrice < product.price
   );
+  const currentPrice = hasDiscount ? product.discountPrice! : product.price;
+  const originalPrice = hasDiscount ? product.price : undefined;
+  const productId = product.productId;
 
   const handleToggleFavorite = () => {
+    if (!isLoggedIn) {
+      onAuthRequired?.();
+      return;
+    }
     setInternalFav(prev => !prev);
-    onToggleFavorite?.(product.id);
+    onToggleFavorite?.(productId);
   };
 
   const handleAddToCart = () => {
-    onAddToCart?.(product.id);
+    onAddToCart?.(productId);
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1500);
   };
 
   return (
@@ -56,12 +74,23 @@ export const CatalogProductCard = ({
           !isGrid ? 'order-2 flex-1' : ''
         }`}
       >
-        <h3 className="font-heading font-medium text-[16px] leading-[1.3] text-[#0C0C0C] tracking-tight line-clamp-2 flex-1 min-w-0">
-          {product.name}
-        </h3>
+        <div className="flex-1 min-w-0">
+          {categoryName && (
+            <span className="text-[11px] font-semibold tracking-wider uppercase text-text-muted mb-0.5 block">
+              {categoryName}
+            </span>
+          )}
+          <h3 className="font-heading font-medium text-[16px] leading-[1.3] text-[#0C0C0C] tracking-tight line-clamp-2">
+            {product.name}
+          </h3>
+          {!isGrid && product.description && (
+            <p className="text-xs text-text mt-1.5 line-clamp-2">
+              {product.description}
+            </p>
+          )}
+        </div>
 
         <div className="flex items-center gap-2.5 shrink-0">
-          {/* Wishlist / Favorite Button */}
           <button
             type="button"
             onClick={handleToggleFavorite}
@@ -79,50 +108,71 @@ export const CatalogProductCard = ({
             />
           </button>
 
-          {/* Add to Cart Button */}
           <button
             type="button"
             onClick={handleAddToCart}
-            className="size-9 rounded-full bg-[#3E8D35] hover:bg-[#34782c] text-white flex items-center justify-center cursor-pointer transition-colors shadow-xs"
+            className={`size-9 rounded-full flex items-center justify-center cursor-pointer transition-all shadow-xs text-white ${
+              added
+                ? 'bg-emerald-600 scale-105'
+                : 'bg-[#3E8D35] hover:bg-[#34782c]'
+            }`}
             aria-label="Add to cart"
+            title={added ? 'Added to cart' : 'Add to cart'}
           >
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.6"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M9 8V6.5A3 3 0 0 1 15 6.5V8" />
-              <path d="M4 8h16l-1.3 10.2a2 2 0 0 1-2 1.8H7.3a2 2 0 0 1-2-1.8L4 8Z" />
-              <path d="M10 12v3M14 12v3" />
-            </svg>
+            {added ? (
+              <Check className="size-4 stroke-[2.5]" />
+            ) : (
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M9 8V6.5A3 3 0 0 1 15 6.5V8" />
+                <path d="M4 8h16l-1.3 10.2a2 2 0 0 1-2 1.8H7.3a2 2 0 0 1-2-1.8L4 8Z" />
+                <path d="M10 12v3M14 12v3" />
+              </svg>
+            )}
           </button>
         </div>
       </div>
 
-      {/* Image Area with Price Overlay */}
       <div
         className={`relative w-full rounded-[14px] overflow-hidden bg-[#F2F3F0] flex items-center justify-center shrink-0 ${
           isGrid ? 'h-52 sm:h-56' : 'h-48 sm:w-64 sm:h-44 order-1'
         }`}
       >
-        {product.imageUrl ? (
-          <img
-            src={product.imageUrl}
-            alt={product.name}
-            className="w-full h-full object-cover"
-          />
+        {product.imageUrl && !imageError ? (
+          <>
+            {!isImageLoaded && (
+              <Skeleton className="absolute inset-0 size-full rounded-none" />
+            )}
+            <img
+              src={product.imageUrl}
+              alt={product.name}
+              onLoad={() => setIsImageLoaded(true)}
+              onError={() => {
+                setImageError(true);
+                setIsImageLoaded(true);
+              }}
+              className={`w-full h-full object-cover transition-opacity duration-300 ${
+                isImageLoaded ? 'opacity-100' : 'opacity-0'
+              }`}
+            />
+          </>
         ) : (
-          <div className="text-text-muted text-xs font-medium">
-            Product Image
+          <div className="flex flex-col items-center justify-center gap-1.5 text-text-muted p-4 text-center">
+            <Flower2 className="size-10 stroke-[1.2] text-primary/40" />
+            <span className="text-xs font-medium text-text-muted">
+              {categoryName || 'Verdora Plant'}
+            </span>
           </div>
         )}
 
-        {/* Price Badges placed directly on the image */}
         <div className="absolute left-3.5 bottom-3.5 flex items-center gap-1.5 z-10">
           <span
             className={`font-heading text-[15px] font-bold px-3 py-1 rounded-[7px] leading-tight tracking-tight shadow-xs ${
@@ -131,12 +181,12 @@ export const CatalogProductCard = ({
                 : 'bg-[#D9DEDB] text-[#0C0C0C]'
             }`}
           >
-            {product.price}₴
+            {currentPrice}₴
           </span>
 
-          {hasDiscount && (
+          {hasDiscount && originalPrice !== undefined && (
             <span className="font-heading text-[12px] font-medium px-2.5 py-1 rounded-[7px] line-through leading-tight text-white bg-[#4C5C4A] shadow-xs">
-              {product.oldPrice}₴
+              {originalPrice}₴
             </span>
           )}
         </div>
